@@ -1,20 +1,19 @@
 @import 'styles/mixins.scss';
 
 .barsContainer {
-    @include flex(center, flex-end, row);
-    overflow: hidden;
-    list-style: none;
-    position: relative;
-    height: 500px;
+  position: relative;
+  @include flex(center, flex-end, row);
 
-    li {
-        border-radius: 6px;
-        margin-bottom: 10px;
-        margin-right: 10px;
-        width: 30px;
-        padding: 10px 0;
-        // align-self: center;
-        // justify-self: center;
-        // height: 140px;
-    }
+  overflow: hidden;
+
+  height: 500px;
+
+  list-style: none;
+
+  li {
+    margin: 0 0 10px 15px;
+    border-radius: 8px;
+    width: 35px;
+    padding: 10px 0;
+  }
 }

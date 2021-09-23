@@ -11,7 +11,7 @@ import PlayerButtonsContainer from './PlayerButtonsContainer';
 export default function SortPlayer({ algorithm }) {
   const [startSorting, setStartSorting] = useState(false);
   const [isSortFinished, setIsSortFinished] = useState(false);
-  const [values, setValues] = useState(getRandomValues(20));
+  const [values, setValues] = useState(getRandomValues());
   const [previousValues, setPreviousValues] = useState(
     values.map((entry) => ({ ...entry, value: 0 })),
   );

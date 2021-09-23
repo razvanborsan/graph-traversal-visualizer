@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { nanoid } from 'nanoid';
-import bubbleSort from 'algorithms/bubbleSort';
-import insertionSort from 'algorithms/insertionSort';
+
+import { bubbleSort, insertionSort, mergeSort } from 'algorithms';
 
 const SORT_ALGORITHM_KEYS = {
   BUBBLE: nanoid(),
@@ -29,6 +29,7 @@ export const sortAlgorithms = [
     key: SORT_ALGORITHM_KEYS.MERGE,
     name: 'Merge Sort',
     complexity: 'O(n^2)',
+    sort: (data, handlers) => mergeSort(data, handlers),
   },
   {
     key: SORT_ALGORITHM_KEYS.QUICK,

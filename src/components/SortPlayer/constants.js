@@ -8,6 +8,6 @@ export const barColors = [
   colors.darkPurple,
 ];
 
-export const NUMBER_OF_BARS = 20;
+export const NUMBER_OF_BARS = 16;
 
 export const constantIds = [...Array(NUMBER_OF_BARS)].map(() => nanoid());
