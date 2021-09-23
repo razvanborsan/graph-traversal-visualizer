@@ -1,0 +1,12 @@
+@mixin flex($justify, $align, $direction: row) {
+    display: flex;
+    justify-content: $justify;
+    align-items: $align;
+    flex-direction: $direction;
+  }
+  
+  @mixin noMarginNoPadding {
+    margin: 0;
+    padding: 0;
+  }
+  

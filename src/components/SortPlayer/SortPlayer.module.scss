@@ -1,0 +1,21 @@
+@import 'styles/colors.scss';
+
+.cardContainer {
+  overflow: hidden;
+
+  margin: 1.5rem;
+  border-width: 0.1rem;
+  border-radius: 0.5rem;
+  padding: 0;
+
+  .animationContainer {
+    width: 1080px;
+    height: 500px;
+
+    background-color: $white;
+  }
+
+  .playerButton {
+    margin-left: 1rem;
+  }
+}

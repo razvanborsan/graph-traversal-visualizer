@@ -1,0 +1,16 @@
+@import './mixins.scss';
+@import './colors.scss';
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+html,
+body {
+  @include flex(center, center);
+
+  background-color: $white-smoke !important;
+  width: 100%;
+}

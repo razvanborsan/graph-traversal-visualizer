@@ -1,0 +1,13 @@
+@import 'styles/colors.scss';
+
+.container {
+  background-color: $white;
+  max-width: 1080px;
+  padding: 1.5rem;
+  margin: 1rem;
+  border-radius: 0.8rem;
+
+  .messageContainer {
+    margin-top: 1rem;
+  }
+}
