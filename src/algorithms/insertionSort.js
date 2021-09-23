@@ -25,8 +25,8 @@ export default function insertionSort(data, handlers) {
     // Place the current element into it's proper position
     let previous = current;
     while (
-      previous > 0 &&
-      dataClone[previous - 1].value > currentElemToSort.value
+      previous > 0
+      && dataClone[previous - 1].value > currentElemToSort.value
     ) {
       dataClone[previous] = dataClone[previous - 1];
       previous -= 1;
