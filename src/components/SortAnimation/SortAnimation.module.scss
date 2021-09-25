@@ -1,6 +1,10 @@
 @import 'styles/mixins.scss';
 
-.barsContainer {
+.barsContainer4,
+.barsContainer8,
+.barsContainer16,
+.barsContainer32,
+.barsContainer64 {
   position: relative;
   @include flex(center, flex-end, row);
 
@@ -10,10 +14,47 @@
 
   list-style: none;
 
-  li {
-    margin: 0 0 10px 15px;
-    border-radius: 8px;
-    width: 35px;
+  .li {
     padding: 10px 0;
+  }
+}
+
+.barsContainer4 {
+  li {
+    margin: 0 0 10px 32px;
+    border-radius: 20px;
+    width: 192px;
+  }
+}
+
+.barsContainer8 {
+  li {
+    margin: 0 0 10px 16px;
+    border-radius: 12px;
+    width: 96px;
+  }
+}
+
+.barsContainer16 {
+  li {
+    margin: 0 0 10px 8px;
+    border-radius: 12px;
+    width: 48px;
+  }
+}
+
+.barsContainer32 {
+  li {
+    margin: 0 0 10px 4px;
+    border-radius: 9px;
+    width: 24px;
+  }
+}
+
+.barsContainer64 {
+  li {
+    margin: 0 0 10px 2px;
+    border-radius: 4px;
+    width: 12px;
   }
 }

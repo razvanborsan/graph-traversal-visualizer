@@ -42,7 +42,7 @@ export default function SortAnimation({
   }, [startSorting, initialValues]);
 
   return (
-    <ul className={styles.barsContainer}>
+    <ul className={styles[`barsContainer${initialValues.length}`]}>
       {sortBars?.map((bar) => (
         <motion.li
           key={bar.id}

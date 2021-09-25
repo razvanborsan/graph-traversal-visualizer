@@ -3,18 +3,25 @@ import PropTypes from 'prop-types';
 import { Box, Flex } from '@chakra-ui/layout';
 
 import SortAnimation from 'components/SortAnimation';
-
-import { getRandomValues } from './variables';
-import * as styles from './SortPlayer.module.scss';
 import PlayerButtonsContainer from './PlayerButtonsContainer';
+
+import { BAR_NUMBER_ACTIONS } from './constants';
+import { getRandomValues } from './variables';
+
+import * as styles from './SortPlayer.module.scss';
 
 export default function SortPlayer({ algorithm }) {
   const [startSorting, setStartSorting] = useState(false);
   const [isSortFinished, setIsSortFinished] = useState(false);
-  const [values, setValues] = useState(getRandomValues());
-  const [previousValues, setPreviousValues] = useState(
-    values.map((entry) => ({ ...entry, value: 0 })),
-  );
+  const [numberOfValues, setNumberOfValues] = useState(3);
+  const [values, setValues] = useState([]);
+  const [previousValues, setPreviousValues] = useState([]);
+
+  useEffect(() => {
+    setPreviousValues(values?.map((entry) => ({ ...entry, value: 0 })));
+    setValues(getRandomValues(numberOfValues));
+  }, [numberOfValues]);
+
   const [variables, setVariables] = useState({
     isSortFinished,
     startSorting,
@@ -36,10 +43,26 @@ export default function SortPlayer({ algorithm }) {
     setStartSorting(action);
   };
 
+  const handleNumberOfValues = (type) => {
+    switch (type) {
+      case BAR_NUMBER_ACTIONS.INCREASE:
+        setNumberOfValues(numberOfValues + 1);
+        break;
+
+      case BAR_NUMBER_ACTIONS.DECREASE:
+        setNumberOfValues(numberOfValues - 1);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const handlers = {
     handleValues,
     handlePreviousValues,
     handleStartSorting,
+    handleNumberOfValues,
   };
 
   useEffect(() => {
@@ -75,7 +98,11 @@ export default function SortPlayer({ algorithm }) {
             </Box>
             <Box>Complexity</Box>
           </Box>
-          <PlayerButtonsContainer variables={variables} handlers={handlers} />
+          <PlayerButtonsContainer
+            variables={variables}
+            handlers={handlers}
+            numberOfValues={numberOfValues}
+          />
         </Flex>
       </Box>
     </>
