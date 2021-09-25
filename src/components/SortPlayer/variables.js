@@ -35,7 +35,7 @@ export const getSorted = (numberOfValues, type) => {
     if (barA.value < barB.value) {
       return type === SORTED_ARRAY_TYPE.INCREASING ? -1 : 1;
     }
-    return type === SORTED_ARRAY_TYPE.DECREASING ? 1 : -1;
+    return type === SORTED_ARRAY_TYPE.INCREASING ? 1 : -1;
   });
 };
 
