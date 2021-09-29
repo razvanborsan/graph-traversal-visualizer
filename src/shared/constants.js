@@ -7,6 +7,7 @@ import {
   selectionSort,
   mergeSort,
   quickSort,
+  heapSort,
 } from 'algorithms';
 
 const SORT_ALGORITHM_KEYS = {
@@ -54,10 +55,11 @@ export const sortAlgorithms = [
     key: SORT_ALGORITHM_KEYS.HEAP,
     name: 'Heap Sort',
     complexity: 'O(n^2)',
+    sort: (data, handlers) => heapSort(data, handlers),
   },
-  {
-    key: SORT_ALGORITHM_KEYS.RADIX,
-    name: 'Radix Sort',
-    complexity: 'O(n^2)',
-  },
+  // {
+  //   key: SORT_ALGORITHM_KEYS.RADIX,
+  //   name: 'Radix Sort',
+  //   complexity: 'O(n^2)',
+  // },
 ];
