@@ -2,6 +2,7 @@
 import { nanoid } from 'nanoid';
 
 import { bubbleSort, insertionSort, mergeSort } from 'algorithms';
+import quickSort from '../algorithms/quickSort';
 
 const SORT_ALGORITHM_KEYS = {
   BUBBLE: nanoid(),
@@ -35,6 +36,7 @@ export const sortAlgorithms = [
     key: SORT_ALGORITHM_KEYS.QUICK,
     name: 'Quick Sort',
     complexity: 'O(n^2)',
+    sort: (data, handlers) => quickSort(data, handlers),
   },
   {
     key: SORT_ALGORITHM_KEYS.HEAP,

@@ -23,7 +23,7 @@ export const getRandomValues = (numberOfValues) => {
 
   return [...Array(elements)].map((_, index) => ({
     id: constantIds[index],
-    color: barColors[3],
+    color: barColors[1],
     value: Math.floor(Math.random() * 10000),
   }));
 };
