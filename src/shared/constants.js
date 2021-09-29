@@ -1,12 +1,18 @@
 /* eslint-disable import/prefer-default-export */
 import { nanoid } from 'nanoid';
 
-import { bubbleSort, insertionSort, mergeSort } from 'algorithms';
-import quickSort from '../algorithms/quickSort';
+import {
+  bubbleSort,
+  insertionSort,
+  selectionSort,
+  mergeSort,
+  quickSort,
+} from 'algorithms';
 
 const SORT_ALGORITHM_KEYS = {
   BUBBLE: nanoid(),
   INSERTION: nanoid(),
+  SELECTION: nanoid(),
   MERGE: nanoid(),
   QUICK: nanoid(),
   HEAP: nanoid(),
@@ -25,6 +31,12 @@ export const sortAlgorithms = [
     name: 'Insertion Sort',
     complexity: 'O(n^2)',
     sort: (data, handlers) => insertionSort(data, handlers),
+  },
+  {
+    key: SORT_ALGORITHM_KEYS.SELECTION,
+    name: 'Selection Sort',
+    complexity: 'O(n^2)',
+    sort: (data, handlers) => selectionSort(data, handlers),
   },
   {
     key: SORT_ALGORITHM_KEYS.MERGE,
