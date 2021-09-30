@@ -32,7 +32,7 @@ export default function partitionSort(data, handlers) {
     animateStep();
 
     // Color the pivot in black
-    dataClone[pivot] = { ...dataClone[pivot], color: colors.black };
+    dataClone[pivot] = { ...dataClone[pivot], color: colors.brightPink };
     animateStep();
 
     // Swap the pivot with the last element of the sub-array

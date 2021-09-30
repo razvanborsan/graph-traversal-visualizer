@@ -91,18 +91,28 @@ export default function SortPlayer({ algorithm }) {
           />
         </Box>
 
-        <Flex>
-          <Box p="6">
-            <Box fontWeight="semibold" as="h4" isTruncated>
-              {algorithm.name}
-            </Box>
-            <Box>Complexity</Box>
-          </Box>
+        <Flex justify="center" align="center">
           <PlayerButtonsContainer
             variables={variables}
             handlers={handlers}
             numberOfValues={numberOfValues}
           />
+          <Box className={styles.legendContainer}>
+            <Box fontWeight="semibold" as="h4" isTruncated>
+              Legend
+            </Box>
+            {algorithm.legend.map((entry) => (
+              <Flex justify="flex-start" align="center">
+                <Box
+                  style={{
+                    backgroundColor: entry.color,
+                  }}
+                  className={styles.colorPreview}
+                />
+                {entry.message}
+              </Flex>
+            ))}
+          </Box>
         </Flex>
       </Box>
     </>
@@ -113,6 +123,12 @@ SortPlayer.propTypes = {
   algorithm: PropTypes.shape({
     key: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    legend: PropTypes.arrayOf(
+      PropTypes.shape({
+        color: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+      }).isRequired,
+    ).isRequired,
     complexity: PropTypes.string.isRequired,
   }).isRequired,
 };

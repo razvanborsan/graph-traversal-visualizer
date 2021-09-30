@@ -9,7 +9,7 @@
   padding: 0;
 
   .animationContainer {
-    width: 1080px;
+    width: 970px;
     height: 500px;
 
     background-color: $white;
@@ -17,5 +17,17 @@
 
   .playerButton {
     margin-left: 1rem;
+  }
+
+  .legendContainer {
+    margin-left: 2rem;
+    padding: 1rem;
+
+    .colorPreview {
+      margin-right: 0.3rem;
+      border-radius: 0.3rem;
+      width: 1.3rem;
+      height: 1.3rem;
+    }
   }
 }
