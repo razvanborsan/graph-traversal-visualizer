@@ -15,6 +15,7 @@ export default function Header() {
         <Box as="nav" className={styles.navContainer}>
           <NavItem link="/" text="Home" />
           <NavItem link="/sortings" text="Sortings" />
+          <NavItem link="/graphs" text="Graphs" />
           <NavItem link="/" text="Contact" />
         </Box>
       </Box>
