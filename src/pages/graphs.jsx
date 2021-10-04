@@ -1,5 +1,6 @@
 import React from 'react';
+import GraphVisualizer from 'components/GraphVisualizer';
 
 export default function Graphs() {
-  return <div>Hello World!</div>;
+  return <GraphVisualizer />;
 }

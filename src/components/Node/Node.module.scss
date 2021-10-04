@@ -1,0 +1,9 @@
+@import 'styles/mixins.scss';
+
+.nodeContainer {
+  @include flex(center, center);
+
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+}

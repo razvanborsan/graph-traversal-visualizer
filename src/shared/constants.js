@@ -21,6 +21,11 @@ const SORT_ALGORITHM_KEYS = {
   RADIX: nanoid(),
 };
 
+export const graphVertice = {
+  width: 30,
+  height: 30,
+};
+
 export const sortAlgorithms = [
   {
     key: SORT_ALGORITHM_KEYS.BUBBLE,
@@ -128,9 +133,4 @@ export const sortAlgorithms = [
     ],
     sort: (data, handlers) => heapSort(data, handlers),
   },
-  // {
-  //   key: SORT_ALGORITHM_KEYS.RADIX,
-  //   name: 'Radix Sort',
-  //   complexity: 'O(n^2)',
-  // },
 ];

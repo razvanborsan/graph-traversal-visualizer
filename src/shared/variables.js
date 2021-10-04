@@ -12,3 +12,7 @@ function delay(delayData) {
 export function addAnimationKeyframe(timeouts, delayData) {
   timeouts.push(delay(delayData));
 }
+
+export function randomIntFromInterval(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}

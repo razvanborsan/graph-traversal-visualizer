@@ -4,3 +4,7 @@ export { default as selectionSort } from './sort/selectionSort';
 export { default as mergeSort } from './sort/mergeSort';
 export { default as quickSort } from './sort/quickSort';
 export { default as heapSort } from './sort/heapSort';
+
+export { default as dfs } from './graph/dfs';
+
+export { default as recursiveBacktracking } from './maze/recursiveBacktraking';

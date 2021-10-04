@@ -1,11 +1,6 @@
-import { addAnimationKeyframe } from 'shared/variables';
+import { addAnimationKeyframe, randomIntFromInterval } from 'shared/variables';
 import colors from 'shared/colors';
 import { SWAP_COLORS_DELAY } from './constants';
-
-function randomIntFromInterval(min, max) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 export default function partitionSort(data, handlers) {
   const dataClone = [...data];
