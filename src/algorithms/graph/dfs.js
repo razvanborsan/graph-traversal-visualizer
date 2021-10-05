@@ -1,5 +1,4 @@
-import { getNodeKey } from 'components/GraphVisualizer/helpers';
-import { buildNodeKey } from '../../components/GraphVisualizer/helpers';
+import { getNodeKey, buildNodeKey } from 'components/GraphVisualizer/helpers';
 
 const DFS_DELAY = 0.05;
 
@@ -70,17 +69,13 @@ export default function dfs(adjacencyList, start, handleSetVisitedNodes) {
     const visitedBeforeCurrentNode = visited.slice(0, currentNodeVisitedIndex);
 
     // This is the number of nodes that have been visited but are not leading to the target
-    const dissipatedNodes =
-      visitedBeforeCurrentNode?.length -
-      visitedBeforeCurrentNode?.filter((node) =>
-        finalRoute?.has(buildNodeKey(node.coords.row, node.coords.col)),
-      )?.length;
+    const dissipatedNodes = visitedBeforeCurrentNode?.length
+      - visitedBeforeCurrentNode?.filter((node) => finalRoute?.has(buildNodeKey(node.coords.row, node.coords.col)))?.length;
 
     // When animating the final route from start to end,
     // we remove the delay time it took to animate all the nodes not leading to the target
     // The last keyframeDelay is the entire duration of the animation
-    node.delays.finalRouteKeyframeDelay =
-      keyframeDelay - dissipatedNodes * DFS_DELAY;
+    node.delays.finalRouteKeyframeDelay = keyframeDelay - dissipatedNodes * DFS_DELAY;
   });
 
   handleSetVisitedNodes([...visited]);

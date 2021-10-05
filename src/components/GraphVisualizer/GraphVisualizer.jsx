@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import { Wrap } from '@chakra-ui/layout';
 
-import { dfs, recursiveBacktracking } from 'algorithms';
+import { bfs, dfs, recursiveBacktracking } from 'algorithms';
 
 import {
   addEdge,
@@ -70,14 +70,16 @@ export default function GraphVisualizer() {
             const yDirection = next.coords.col - node.coords.col;
 
             const direction = findDirection(xDirection, yDirection);
-            const { north, east, south, west } = node.walls;
+            const {
+              north, east, south, west,
+            } = node.walls;
 
             // We only add an edge if there is no wall between the 2 neighbours
             if (
-              (direction === DIRECTIONS.NORTH && !north) ||
-              (direction === DIRECTIONS.EAST && !east) ||
-              (direction === DIRECTIONS.SOUTH && !south) ||
-              (direction === DIRECTIONS.WEST && !west)
+              (direction === DIRECTIONS.NORTH && !north)
+              || (direction === DIRECTIONS.EAST && !east)
+              || (direction === DIRECTIONS.SOUTH && !south)
+              || (direction === DIRECTIONS.WEST && !west)
             ) {
               addEdge(...[node, next]);
             }
@@ -137,12 +139,18 @@ export default function GraphVisualizer() {
 
       <Button
         colorScheme="teal"
-        onClick={() =>
-          dfs(adjacencyList, adjacencyList.get('0-0'), handleSetVisitedNodes)
-        }
+        onClick={() => dfs(adjacencyList, adjacencyList.get('0-0'), handleSetVisitedNodes)}
         style={{ marginRight: 10 }}
       >
         DFS
+      </Button>
+
+      <Button
+        colorScheme="teal"
+        onClick={() => bfs(adjacencyList, adjacencyList.get('0-0'), handleSetVisitedNodes)}
+        style={{ marginRight: 10 }}
+      >
+        BFS
       </Button>
 
       <Button
