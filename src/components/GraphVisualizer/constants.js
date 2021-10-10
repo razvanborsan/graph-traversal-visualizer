@@ -14,37 +14,42 @@ export const possibleNeighbourCoords = {
 };
 
 // Each node is 30px wide, so we have 1080 / 30 = 36 columns
-const cols = 36;
-const rows = 15;
+export const MAZE = {
+  COLS: 36,
+  ROWS: 15,
+};
 
-export const initialNodes = [...Array(cols * rows)].map((_, index) => ({
-  id: String(nanoid()),
-  coords: {
-    row: Math.floor(index / cols),
-    col: Math.floor(index % cols),
-  },
-  controlState: {
-    isStart: false,
-    isEnd: false,
-    isVisited: false,
-    isPartOfFinalRoute: false,
-  },
-  routeToStart: new Map(),
-  maze: {
-    isVisited: false,
+export const initialNodes = [...Array(MAZE.COLS * MAZE.ROWS)].map(
+  (_, index) => ({
+    id: String(nanoid()),
+    coords: {
+      row: Math.floor(index / MAZE.COLS),
+      col: Math.floor(index % MAZE.COLS),
+    },
+    controlState: {
+      isStart: false,
+      isEnd: false,
+      isVisited: false,
+      isPartOfFinalRoute: false,
+    },
+    routeToStart: new Map(),
+    maze: {
+      isVisited: false,
+      neighbours: [],
+      ellerSet: -1,
+      firstVisitDelay: 0,
+      lastVisitDelay: 0,
+    },
+    delays: {
+      keyframeDelay: 0,
+      finalRouteKeyframeDelay: 0,
+    },
+    walls: {
+      north: true,
+      east: true,
+      south: true,
+      west: true,
+    },
     neighbours: [],
-    firstVisitDelay: 0,
-    lastVisitDelay: 0,
-  },
-  delays: {
-    keyframeDelay: 0,
-    finalRouteKeyframeDelay: 0,
-  },
-  walls: {
-    north: true,
-    east: true,
-    south: true,
-    west: true,
-  },
-  neighbours: [],
-}));
+  }),
+);

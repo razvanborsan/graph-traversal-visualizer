@@ -25,14 +25,10 @@ import * as styles from './Node.module.scss';
 
 const MotionBox = motion(Box);
 
-export default function Node({
-  controlState, walls, maze, delays,
-}) {
+export default function Node({ controlState, walls, maze, delays }) {
   const controls = useAnimation();
 
-  const {
-    isStart, isEnd, isVisited, isPartOfFinalRoute,
-  } = controlState;
+  const { isStart, isEnd, isVisited, isPartOfFinalRoute } = controlState;
   const { keyframeDelay, finalRouteKeyframeDelay } = delays;
 
   const variants = {
@@ -59,7 +55,7 @@ export default function Node({
         backgroundColor: {
           duration: maze.lastVisitDelay - maze.firstVisitDelay,
           delay: maze.firstVisitDelay,
-          times: [0.995, 1],
+          times: [0.999, 1],
         },
       },
     },
