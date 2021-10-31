@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import { Wrap } from '@chakra-ui/layout';
 
-import { bfs, dfs, recursiveBacktracking, eller } from 'algorithms';
+import { bfs, dfs, recursiveBacktracking, eller, prim } from 'algorithms';
 
 import {
   addEdge,
@@ -13,12 +13,18 @@ import {
   getNodeKey,
 } from './helpers';
 
-import { possibleNeighbourCoords, DIRECTIONS, initialNodes } from './constants';
+import {
+  possibleNeighbourCoords,
+  DIRECTIONS,
+  MAZE_TYPES,
+  initialNodes,
+} from './constants';
 
 export default function GraphVisualizer() {
   const [nodeElements, setNodeElements] = useState([]);
   const [visitedNodes, setVisitedNodes] = useState([]);
   const [adjacencyList, setAdjacencyList] = useState();
+  const [mazeType, setMazeType] = useState();
 
   const handleSetVisitedNodes = (visited) => {
     setVisitedNodes(visited);
@@ -44,7 +50,7 @@ export default function GraphVisualizer() {
       }
     });
 
-    const nodeElementsArray = getNodeElements(deepClone);
+    const nodeElementsArray = getNodeElements(deepClone, mazeType);
     setNodeElements(() => [...nodeElementsArray]);
     setAdjacencyList(deepClone);
   }, []);
@@ -85,7 +91,7 @@ export default function GraphVisualizer() {
         }
       });
 
-      const nodeElementsArray = getNodeElements(deepClone);
+      const nodeElementsArray = getNodeElements(deepClone, mazeType);
       setNodeElements(() => [...nodeElementsArray]);
       setAdjacencyList(deepClone);
     }
@@ -98,7 +104,7 @@ export default function GraphVisualizer() {
     const startNode = deepClone.get('0-0');
 
     startNode.controlState.isStart = true;
-    setNodeElements(() => [...getNodeElements(deepClone)]);
+    setNodeElements(() => [...getNodeElements(deepClone, mazeType)]);
     setAdjacencyList(deepClone);
   };
 
@@ -109,7 +115,7 @@ export default function GraphVisualizer() {
     const startNode = deepClone.get('5-25');
 
     startNode.controlState.isEnd = true;
-    setNodeElements(() => [...getNodeElements(deepClone)]);
+    setNodeElements(() => [...getNodeElements(deepClone, mazeType)]);
     setAdjacencyList(deepClone);
   };
 
@@ -158,6 +164,7 @@ export default function GraphVisualizer() {
       <Button
         colorScheme="teal"
         onClick={() => {
+          setMazeType(MAZE_TYPES.BACKTARCKING);
           recursiveBacktracking(
             adjacencyList,
             adjacencyList.get('0-0'),
@@ -172,10 +179,22 @@ export default function GraphVisualizer() {
       <Button
         colorScheme="teal"
         onClick={() => {
+          setMazeType(MAZE_TYPES.ELLER);
           eller(adjacencyList, handleSetVisitedNodes);
         }}
+        style={{ marginRight: 10 }}
       >
         Eller's Algorithm
+      </Button>
+
+      <Button
+        colorScheme="teal"
+        onClick={() => {
+          setMazeType(MAZE_TYPES.PRIM);
+          prim(adjacencyList, handleSetVisitedNodes);
+        }}
+      >
+        Prim's Algorithm
       </Button>
     </>
   );

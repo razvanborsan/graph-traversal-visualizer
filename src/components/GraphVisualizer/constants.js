@@ -35,6 +35,7 @@ export const initialNodes = [...Array(MAZE.COLS * MAZE.ROWS)].map(
     routeToStart: new Map(),
     maze: {
       isVisited: false,
+      isFrontier: false,
       neighbours: [],
       ellerSet: -1,
       firstVisitDelay: 0,
@@ -53,3 +54,9 @@ export const initialNodes = [...Array(MAZE.COLS * MAZE.ROWS)].map(
     neighbours: [],
   }),
 );
+
+export const MAZE_TYPES = {
+  BACKTARCKING: 'BACKTRACKING',
+  ELLER: 'ELLER',
+  PRIM: 'PRIM',
+};

@@ -10,3 +10,4 @@ export { default as bfs } from './graph/bfs';
 
 export { default as recursiveBacktracking } from './maze/recursiveBacktraking';
 export { default as eller } from './maze/eller';
+export { default as prim } from './maze/prim';

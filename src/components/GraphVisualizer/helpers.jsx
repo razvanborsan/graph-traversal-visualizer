@@ -31,13 +31,42 @@ export const findDirection = (xCoord, yCoord) => {
   }
 };
 
+export const removeWallBetweenNodes = (rootNode, neighbourNode) => {
+  // the difference in coordinates shows use the direction of the neighbour
+  const xDirection = neighbourNode.coords.row - rootNode.coords.row;
+  const yDirection = neighbourNode.coords.col - rootNode.coords.col;
+
+  const direction = findDirection(xDirection, yDirection);
+
+  switch (direction) {
+    case DIRECTIONS.NORTH:
+      rootNode.walls.north = false;
+      neighbourNode.walls.south = false;
+      break;
+    case DIRECTIONS.EAST:
+      rootNode.walls.east = false;
+      neighbourNode.walls.west = false;
+      break;
+    case DIRECTIONS.WEST:
+      rootNode.walls.west = false;
+      neighbourNode.walls.east = false;
+      break;
+    case DIRECTIONS.SOUTH:
+      rootNode.walls.south = false;
+      neighbourNode.walls.north = false;
+      break;
+    default:
+      break;
+  }
+};
+
 export function addEdge(origin, destination) {
   if (!origin.neighbours.find((node) => node.id === destination.id)) {
     origin.neighbours.push(destination);
   }
 }
 
-export const getNodeElements = (adjacencyList) => {
+export const getNodeElements = (adjacencyList, mazeType) => {
   const nodeElements = [];
 
   adjacencyList.forEach((value) => {
@@ -46,6 +75,7 @@ export const getNodeElements = (adjacencyList) => {
         <Node
           controlState={value.controlState}
           maze={value.maze}
+          mazeType={mazeType}
           delays={value.delays}
           color={value.color}
           walls={value.walls}
