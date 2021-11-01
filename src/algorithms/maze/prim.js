@@ -22,8 +22,7 @@ export default function prim(adjacencyList, handleSetVisitedNodes) {
 
   while (frontier.size) {
     const items = Array.from(frontier);
-    const frontierNodeKey =
-      items[randomIntFromInterval(0, items.length - 1)][0];
+    const frontierNodeKey = items[randomIntFromInterval(0, items.length - 1)][0];
     const frontierNode = adjacencyList.get(frontierNodeKey);
 
     frontierNode.maze.neighbours.forEach((neighbour) => {

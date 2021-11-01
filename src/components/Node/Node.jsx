@@ -19,7 +19,7 @@ import {
   getVisitedTimes,
   idleBackground,
   idleBorder,
-  mazeColors,
+  getMazeColors,
   routeColors,
 } from './constants';
 import * as styles from './Node.module.scss';
@@ -48,7 +48,7 @@ export default function Node({ controlState, walls, maze, mazeType, delays }) {
     },
 
     mazeVisited: {
-      backgroundColor: mazeColors,
+      backgroundColor: getMazeColors(mazeType),
       ...getMazeBorders(walls, mazeType),
       transition: {
         duration: 0.05,

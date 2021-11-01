@@ -19,7 +19,12 @@ export const routeColors = [
   colors.veryLightPurple,
 ];
 
-export const mazeColors = [colors.veryLightGray, colors.white];
+export const getMazeColors = (mazeType) => {
+  if (mazeType === MAZE_TYPES.PRIM) {
+    return [colors.darkGray, colors.white];
+  }
+  return [colors.lightGray, colors.white];
+};
 
 export const getVisitedTimes = (finalRouteKeyframeDelay = false) => {
   if (finalRouteKeyframeDelay) {
