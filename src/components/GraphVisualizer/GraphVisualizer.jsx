@@ -3,7 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import { Wrap } from '@chakra-ui/layout';
 
-import { bfs, dfs, recursiveBacktracking, eller, prim } from 'algorithms';
+import {
+  bfs,
+  dfs,
+  recursiveBacktracking,
+  eller,
+  prim,
+  recursiveDivision,
+} from 'algorithms';
 
 import {
   addEdge,
@@ -28,6 +35,10 @@ export default function GraphVisualizer() {
 
   const handleSetVisitedNodes = (visited) => {
     setVisitedNodes(visited);
+  };
+
+  const handleSetAdjacencyList = (newList) => {
+    setAdjacencyList(newList);
   };
 
   useEffect(() => {
@@ -193,8 +204,23 @@ export default function GraphVisualizer() {
           setMazeType(MAZE_TYPES.PRIM);
           prim(adjacencyList, handleSetVisitedNodes);
         }}
+        style={{ marginRight: 10 }}
       >
         Prim's Algorithm
+      </Button>
+
+      <Button
+        colorScheme="teal"
+        onClick={() => {
+          setMazeType(MAZE_TYPES.RECURSIVE_DIVISION);
+          recursiveDivision(
+            adjacencyList,
+            handleSetVisitedNodes,
+            handleSetAdjacencyList,
+          );
+        }}
+      >
+        Recursive Division
       </Button>
     </>
   );

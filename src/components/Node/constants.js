@@ -42,36 +42,58 @@ export const getVisitedTimes = (finalRouteKeyframeDelay = false) => {
 };
 
 export const getMazeBorders = (walls, mazeType) => {
-  if (mazeType === MAZE_TYPES.PRIM) {
-    return {
-      borderTop: [
-        `solid 0.05px ${colors.veryLightGray}`,
-        `solid 0px ${colors.darkGray}`,
-        `solid ${walls.north ? 0.1 : 0}px ${colors.darkGray}`,
-      ],
-      borderRight: [
-        `solid 0.1px ${colors.veryLightGray}`,
-        `solid 0px ${colors.darkGray}`,
-        `solid ${walls.east ? 0.1 : 0}px ${colors.darkGray}`,
-      ],
-      borderBottom: [
-        `solid 0.1px ${colors.veryLightGray}`,
-        `solid 0px ${colors.darkGray}`,
-        `solid ${walls.south ? 0.1 : 0}px ${colors.darkGray}`,
-      ],
-      borderLeft: [
-        `solid 0.1px ${colors.veryLightGray}`,
-        `solid 0px ${colors.darkGray}`,
-        `solid ${walls.west ? 0.1 : 0}px ${colors.darkGray}`,
-      ],
-    };
+  switch (mazeType) {
+    case MAZE_TYPES.RECURSIVE_DIVISION:
+      return {
+        borderTop: [
+          `solid 0px ${colors.white}`,
+          `solid ${walls.north ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+        borderRight: [
+          `solid 0px ${colors.white}`,
+          `solid ${walls.east ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+        borderLeft: [
+          `solid 0px ${colors.white}`,
+          `solid ${walls.west ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+        borderBottom: [
+          `solid 0px ${colors.white}`,
+          `solid ${walls.south ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+      };
+    case MAZE_TYPES.PRIM: {
+      return {
+        borderTop: [
+          `solid 0.05px ${colors.veryLightGray}`,
+          `solid 0px ${colors.darkGray}`,
+          `solid ${walls.north ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+        borderRight: [
+          `solid 0.1px ${colors.veryLightGray}`,
+          `solid 0px ${colors.darkGray}`,
+          `solid ${walls.east ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+        borderBottom: [
+          `solid 0.1px ${colors.veryLightGray}`,
+          `solid 0px ${colors.darkGray}`,
+          `solid ${walls.south ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+        borderLeft: [
+          `solid 0.1px ${colors.veryLightGray}`,
+          `solid 0px ${colors.darkGray}`,
+          `solid ${walls.west ? 0.1 : 0}px ${colors.darkGray}`,
+        ],
+      };
+    }
+    default:
+      return {
+        borderTop: `solid ${walls.north ? 0.1 : 0}px ${colors.darkGray}`,
+        borderRight: `solid ${walls.east ? 0.1 : 0}px ${colors.darkGray}`,
+        borderBottom: `solid ${walls.south ? 0.1 : 0}px ${colors.darkGray}`,
+        borderLeft: `solid ${walls.west ? 0.1 : 0}px ${colors.darkGray}`,
+      };
   }
-  return {
-    borderTop: `solid ${walls.north ? 0.1 : 0}px ${colors.darkGray}`,
-    borderRight: `solid ${walls.east ? 0.1 : 0}px ${colors.darkGray}`,
-    borderBottom: `solid ${walls.south ? 0.1 : 0}px ${colors.darkGray}`,
-    borderLeft: `solid ${walls.west ? 0.1 : 0}px ${colors.darkGray}`,
-  };
 };
 
 export const getMazeBordersTransition = (maze, mazeType) => {
@@ -96,6 +118,31 @@ export const getMazeBordersTransition = (maze, mazeType) => {
         duration: maze.lastVisitDelay - maze.firstVisitDelay,
         delay: maze.firstVisitDelay,
         times: [0.99, 0.999, 1],
+      },
+    };
+  }
+  if (mazeType === MAZE_TYPES.RECURSIVE_DIVISION) {
+    const { north, east, south, west } = maze.recursiveDivisionDelay;
+    return {
+      borderTop: {
+        duration: 0,
+        delay: north,
+        times: [0.999, 1],
+      },
+      borderRight: {
+        duration: 0,
+        delay: east,
+        times: [0.999, 1],
+      },
+      borderLeft: {
+        duration: 0,
+        delay: west,
+        times: [0.999, 1],
+      },
+      borderBottom: {
+        duration: 0,
+        delay: south,
+        times: [0.999, 1],
       },
     };
   }

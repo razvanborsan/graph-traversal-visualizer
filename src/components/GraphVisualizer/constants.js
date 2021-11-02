@@ -40,6 +40,12 @@ export const initialNodes = [...Array(MAZE.COLS * MAZE.ROWS)].map(
       ellerSet: -1,
       firstVisitDelay: 0,
       lastVisitDelay: 0,
+      recursiveDivisionDelay: {
+        north: 0,
+        east: 0,
+        south: 0,
+        west: 0,
+      },
     },
     delays: {
       keyframeDelay: 0,
@@ -59,4 +65,5 @@ export const MAZE_TYPES = {
   BACKTARCKING: 'BACKTRACKING',
   ELLER: 'ELLER',
   PRIM: 'PRIM',
+  RECURSIVE_DIVISION: 'RECURSIVE_DIVISION',
 };
