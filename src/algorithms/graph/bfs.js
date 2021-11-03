@@ -2,7 +2,12 @@ import { getNodeKey, buildNodeKey } from 'components/GraphVisualizer/helpers';
 
 const getBFSDelay = (node) => node.routeToStart.size / 20;
 
-export default function bfs(adjacencyList, start, handleSetVisitedNodes) {
+export default function bfs(
+  adjacencyList,
+  start,
+  handleSetVisitedNodes,
+  handleSetAdjacencyList,
+) {
   // Deep clone the adjacency list so we never modify it directly
   const deepCloneAdjacencyList = new Map();
   adjacencyList.forEach((value, key) => {
@@ -60,5 +65,6 @@ export default function bfs(adjacencyList, start, handleSetVisitedNodes) {
     node.delays.finalRouteKeyframeDelay = keyframeDelay;
   });
 
+  handleSetAdjacencyList(deepCloneAdjacencyList);
   handleSetVisitedNodes([...visited]);
 }

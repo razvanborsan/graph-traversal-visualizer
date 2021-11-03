@@ -25,6 +25,7 @@ export default function recursiveDivision(
   adjacencyList,
   handleSetVisitedNodes,
   handleSetAdjacencyList,
+  handleSetSnapshot,
 ) {
   let delay = 0;
   const visited = [];
@@ -124,4 +125,5 @@ export default function recursiveDivision(
 
   handleSetAdjacencyList(deepCloneAdjacencyList);
   handleSetVisitedNodes([...visited]);
+  handleSetSnapshot([...visited]);
 }

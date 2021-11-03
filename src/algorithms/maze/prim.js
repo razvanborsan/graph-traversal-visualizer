@@ -7,7 +7,11 @@ import {
 
 const MAZE_DELAY = 0.01;
 
-export default function prim(adjacencyList, handleSetVisitedNodes) {
+export default function prim(
+  adjacencyList,
+  handleSetVisitedNodes,
+  handleSetSnapshot,
+) {
   const frontier = new Map();
   const visited = [];
   let delay = 0;
@@ -22,7 +26,8 @@ export default function prim(adjacencyList, handleSetVisitedNodes) {
 
   while (frontier.size) {
     const items = Array.from(frontier);
-    const frontierNodeKey = items[randomIntFromInterval(0, items.length - 1)][0];
+    const frontierNodeKey =
+      items[randomIntFromInterval(0, items.length - 1)][0];
     const frontierNode = adjacencyList.get(frontierNodeKey);
 
     frontierNode.maze.neighbours.forEach((neighbour) => {
@@ -49,4 +54,5 @@ export default function prim(adjacencyList, handleSetVisitedNodes) {
   }
 
   handleSetVisitedNodes([...visited]);
+  handleSetSnapshot([...visited]);
 }

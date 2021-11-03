@@ -66,14 +66,14 @@ export function addEdge(origin, destination) {
   }
 }
 
-export const getNodeElements = (adjacencyList, mazeType) => {
+export const getNodeElements = (adjacencyList, mazeType, isMazeAnimated) => {
   const nodeElements = [];
-
   adjacencyList.forEach((value) => {
     nodeElements.push(
       <WrapItem key={value.id} style={{ margin: 0, padding: 0 }}>
         <Node
           controlState={value.controlState}
+          isMazeAnimated={isMazeAnimated}
           maze={value.maze}
           mazeType={mazeType}
           delays={value.delays}

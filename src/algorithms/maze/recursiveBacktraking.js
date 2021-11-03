@@ -20,6 +20,7 @@ export default function recursiveBacktracking(
   adjacencyList,
   start,
   handleSetVisitedNodes,
+  handleSetSnapshot,
 ) {
   const visited = [];
   let delay = 0;
@@ -83,4 +84,5 @@ export default function recursiveBacktracking(
   loop(deepCloneStartNode);
 
   handleSetVisitedNodes([...visited]);
+  handleSetSnapshot([...visited]);
 }

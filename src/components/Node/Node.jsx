@@ -26,7 +26,14 @@ import * as styles from './Node.module.scss';
 
 const MotionBox = motion(Box);
 
-export default function Node({ controlState, walls, maze, mazeType, delays }) {
+export default function Node({
+  controlState,
+  walls,
+  maze,
+  mazeType,
+  delays,
+  isMazeAnimated,
+}) {
   const controls = useAnimation();
 
   const { isStart, isEnd, isVisited, isPartOfFinalRoute } = controlState;
@@ -50,16 +57,18 @@ export default function Node({ controlState, walls, maze, mazeType, delays }) {
     mazeVisited: {
       backgroundColor: getMazeColors(mazeType),
       ...getMazeBorders(walls, mazeType),
-      transition: {
-        duration: 0.05,
-        delay: maze.firstVisitDelay,
-        backgroundColor: {
-          duration: maze.lastVisitDelay - maze.firstVisitDelay,
+      ...(isMazeAnimated && {
+        transition: {
+          duration: 0.05,
           delay: maze.firstVisitDelay,
-          times: [0.999, 1],
+          backgroundColor: {
+            duration: maze.lastVisitDelay - maze.firstVisitDelay,
+            delay: maze.firstVisitDelay,
+            times: [0.999, 1],
+          },
+          ...getMazeBordersTransition(maze, mazeType),
         },
-        ...getMazeBordersTransition(maze, mazeType),
-      },
+      }),
     },
     start: {
       backgroundColor: finalRouteBackground,
@@ -122,6 +131,7 @@ Node.propTypes = {
     lastVisitDelay: PropTypes.number.isRequired,
   }).isRequired,
   mazeType: PropTypes.string.isRequired,
+  isMazeAnimated: PropTypes.bool.isRequired,
   delays: PropTypes.shape({
     keyframeDelay: PropTypes.number.isRequired,
     finalRouteKeyframeDelay: PropTypes.number.isRequired,

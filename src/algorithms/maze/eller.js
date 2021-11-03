@@ -1,7 +1,11 @@
 import { MAZE } from 'components/GraphVisualizer/constants';
 import { buildNodeKey } from 'components/GraphVisualizer/helpers';
 
-export default function eller(adjacencyList, handleSetVisitedNodes) {
+export default function eller(
+  adjacencyList,
+  handleSetVisitedNodes,
+  handleSetSnapshot,
+) {
   const visited = [];
   let uniqueSetNumber = 0;
   let delay = 0;
@@ -97,8 +101,8 @@ export default function eller(adjacencyList, handleSetVisitedNodes) {
           currNode.walls.south = false;
           belowNode.walls.north = false;
         } else if (
-          totalSouthWalls === 0
-          && currentSet.at(-1).id === currNode.id
+          totalSouthWalls === 0 &&
+          currentSet.at(-1).id === currNode.id
         ) {
           currNode.walls.south = false;
           belowNode.walls.north = false;
@@ -166,4 +170,5 @@ export default function eller(adjacencyList, handleSetVisitedNodes) {
     }
   }
   handleSetVisitedNodes([...visited]);
+  handleSetSnapshot([...visited]);
 }

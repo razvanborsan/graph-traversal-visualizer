@@ -19,8 +19,8 @@ export const MAZE = {
   ROWS: 15,
 };
 
-export const initialNodes = [...Array(MAZE.COLS * MAZE.ROWS)].map(
-  (_, index) => ({
+export const getInitialNodes = () =>
+  [...Array(MAZE.COLS * MAZE.ROWS)].map((_, index) => ({
     id: String(nanoid()),
     coords: {
       row: Math.floor(index / MAZE.COLS),
@@ -58,11 +58,10 @@ export const initialNodes = [...Array(MAZE.COLS * MAZE.ROWS)].map(
       west: true,
     },
     neighbours: [],
-  }),
-);
+  }));
 
 export const MAZE_TYPES = {
-  BACKTARCKING: 'BACKTRACKING',
+  BACKTRACKING: 'BACKTRACKING',
   ELLER: 'ELLER',
   PRIM: 'PRIM',
   RECURSIVE_DIVISION: 'RECURSIVE_DIVISION',
