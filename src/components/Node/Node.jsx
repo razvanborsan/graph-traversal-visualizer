@@ -7,10 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHourglassStart,
   faHourglassEnd,
+  faAnchor,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { graphVertice } from 'shared/constants';
+import colors from 'shared/colors';
 
+import { getDijkstraDelay } from 'shared/variables';
 import {
   finalRouteBackground,
   finalRouteColors,
@@ -36,12 +39,14 @@ export default function Node({
 }) {
   const controls = useAnimation();
 
-  const { isStart, isEnd, isVisited, isPartOfFinalRoute } = controlState;
+  const { isStart, isEnd, isWeighted, isVisited, isPartOfFinalRoute } =
+    controlState;
   const { keyframeDelay, finalRouteKeyframeDelay } = delays;
 
   const variants = {
     visited: {
       backgroundColor: isPartOfFinalRoute ? finalRouteColors : routeColors,
+      scale: isWeighted ? [1, 1.1, 1.15, 1.1, 1] : 1,
       transition: {
         duration: 1,
         times: getVisitedTimes(),
@@ -50,6 +55,12 @@ export default function Node({
           duration: isPartOfFinalRoute ? finalRouteKeyframeDelay : 1,
           times: getVisitedTimes(finalRouteKeyframeDelay),
           delay: keyframeDelay,
+        },
+        scale: {
+          duration: 0.25,
+          times: getVisitedTimes(finalRouteKeyframeDelay),
+          delay: keyframeDelay - getDijkstraDelay(15),
+          repeat: 2,
         },
       },
     },
@@ -71,9 +82,11 @@ export default function Node({
       }),
     },
     start: {
+      ...getMazeBorders(walls, mazeType),
       backgroundColor: finalRouteBackground,
     },
     end: {
+      ...getMazeBorders(walls, mazeType),
       backgroundColor: finalRouteBackground,
     },
     idle: {
@@ -94,7 +107,7 @@ export default function Node({
     } else {
       controls.start('idle');
     }
-  }, [isStart, isEnd, isVisited, maze.isVisited]);
+  }, [isStart, isEnd, isWeighted, isVisited, maze.isVisited]);
 
   return (
     <MotionBox
@@ -108,6 +121,11 @@ export default function Node({
     >
       {isStart ? <FontAwesomeIcon icon={faHourglassStart} /> : ''}
       {isEnd ? <FontAwesomeIcon icon={faHourglassEnd} /> : ''}
+      {isWeighted ? (
+        <FontAwesomeIcon style={{ color: colors.anchorBlue }} icon={faAnchor} />
+      ) : (
+        ''
+      )}
     </MotionBox>
   );
 }
@@ -116,6 +134,7 @@ Node.propTypes = {
   controlState: PropTypes.shape({
     isStart: PropTypes.bool.isRequired,
     isEnd: PropTypes.bool.isRequired,
+    isWeighted: PropTypes.bool.isRequired,
     isVisited: PropTypes.bool.isRequired,
     isPartOfFinalRoute: PropTypes.bool.isRequired,
   }).isRequired,

@@ -6,6 +6,7 @@ import { Flex, Wrap, Spacer } from '@chakra-ui/layout';
 import {
   bfs,
   dfs,
+  dijkstra,
   recursiveBacktracking,
   eller,
   prim,
@@ -39,6 +40,7 @@ export default function GraphVisualizer() {
   const [mazeType, setMazeType] = useState(MAZE_TYPES.BACKTRACKING);
   const [pathfinderAlgo, setPathfinderAlgo] = useState('bfs');
   const [snapshot, setSnapshot] = useState([]);
+  const initialNodes = getInitialNodes();
 
   const handleSetVisitedNodes = (visited) => {
     setVisitedNodes(visited);
@@ -56,6 +58,7 @@ export default function GraphVisualizer() {
     const startNode = deepClone.get('0-0');
 
     startNode.controlState.isStart = true;
+    startNode.controlState.isWeighted = false;
     setNodeElements(() => [
       ...getNodeElements(deepClone, mazeType, isMazeAnimated),
     ]);
@@ -66,6 +69,7 @@ export default function GraphVisualizer() {
     const startNode = deepClone.get('5-25');
 
     startNode.controlState.isEnd = true;
+    startNode.controlState.isWeighted = false;
     setNodeElements(() => [
       ...getNodeElements(deepClone, mazeType, isMazeAnimated),
     ]);
@@ -77,7 +81,6 @@ export default function GraphVisualizer() {
       setReset(false);
 
       // This function runs only once; we build the graph here
-      const initialNodes = getInitialNodes();
       const deepClone = new Map();
       initialNodes.forEach((node) => {
         deepClone.set(getNodeKey(node), node);
@@ -180,6 +183,7 @@ export default function GraphVisualizer() {
           >
             <option value="bfs">Breadth First Search</option>
             <option value="dfs">Depth First Search</option>
+            <option value="dijkstra">Dijkstra's Algorithm</option>
           </Select>
         </Box>
         <Spacer />
@@ -200,6 +204,14 @@ export default function GraphVisualizer() {
                 break;
               case 'bfs':
                 bfs(
+                  adjacencyList,
+                  adjacencyList.get('0-0'),
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                );
+                break;
+              case 'dijkstra':
+                dijkstra(
                   adjacencyList,
                   adjacencyList.get('0-0'),
                   handleSetVisitedNodes,
@@ -227,6 +239,13 @@ export default function GraphVisualizer() {
                   isVisited: false,
                   isPartOfFinalRoute: false,
                 },
+                neighbours: value.neighbours.map((neighbour) => ({
+                  ...neighbour,
+                  controlState: {
+                    ...neighbour.controlState,
+                    isVisited: false,
+                  },
+                })),
                 routeToStart: new Map(),
               })),
             );
@@ -240,10 +259,17 @@ export default function GraphVisualizer() {
                   isVisited: false,
                   isPartOfFinalRoute: false,
                 },
+                neighbours: value.neighbours.map((neighbour) => ({
+                  ...neighbour,
+                  controlState: {
+                    ...neighbour.controlState,
+                    isVisited: false,
+                  },
+                })),
                 routeToStart: new Map(),
               }),
-            ),
-              setAdjacencyList(deepClone);
+            );
+            setAdjacencyList(deepClone);
           }}
         >
           Reset path
@@ -287,7 +313,6 @@ export default function GraphVisualizer() {
           onClick={() => {
             setEnableStart(false);
             setEnableFindPath(true);
-            // setSnapshot(adjacencyList);
             switch (mazeType) {
               case MAZE_TYPES.BACKTRACKING:
                 recursiveBacktracking(

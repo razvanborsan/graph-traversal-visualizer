@@ -4,6 +4,7 @@ const colors = {
 
   brightCyan: '#3AAFA9',
   brightBlue: '#58B8ED',
+  anchorBlue: '#3671BF',
 
   brightPink: '#FF008C',
   darkPink: '#D309E1',

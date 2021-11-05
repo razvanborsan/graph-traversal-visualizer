@@ -20,45 +20,51 @@ export const MAZE = {
 };
 
 export const getInitialNodes = () =>
-  [...Array(MAZE.COLS * MAZE.ROWS)].map((_, index) => ({
-    id: String(nanoid()),
-    coords: {
-      row: Math.floor(index / MAZE.COLS),
-      col: Math.floor(index % MAZE.COLS),
-    },
-    controlState: {
-      isStart: false,
-      isEnd: false,
-      isVisited: false,
-      isPartOfFinalRoute: false,
-    },
-    routeToStart: new Map(),
-    maze: {
-      isVisited: false,
-      isFrontier: false,
-      neighbours: [],
-      ellerSet: -1,
-      firstVisitDelay: 0,
-      lastVisitDelay: 0,
-      recursiveDivisionDelay: {
-        north: 0,
-        east: 0,
-        south: 0,
-        west: 0,
+  [...Array(MAZE.COLS * MAZE.ROWS)].map((_, index) => {
+    const random = Math.random() > 0.95;
+
+    return {
+      id: String(nanoid()),
+      coords: {
+        row: Math.floor(index / MAZE.COLS),
+        col: Math.floor(index % MAZE.COLS),
       },
-    },
-    delays: {
-      keyframeDelay: 0,
-      finalRouteKeyframeDelay: 0,
-    },
-    walls: {
-      north: true,
-      east: true,
-      south: true,
-      west: true,
-    },
-    neighbours: [],
-  }));
+      controlState: {
+        isStart: false,
+        isEnd: false,
+        isVisited: false,
+        isPartOfFinalRoute: false,
+        isWeighted: random,
+      },
+      routeToStart: new Map(),
+      maze: {
+        isVisited: false,
+        isFrontier: false,
+        neighbours: [],
+        ellerSet: -1,
+        firstVisitDelay: 0,
+        lastVisitDelay: 0,
+        recursiveDivisionDelay: {
+          north: 0,
+          east: 0,
+          south: 0,
+          west: 0,
+        },
+      },
+      delays: {
+        keyframeDelay: 0,
+        finalRouteKeyframeDelay: 0,
+      },
+      walls: {
+        north: true,
+        east: true,
+        south: true,
+        west: true,
+      },
+      weight: random ? 15 : 1,
+      neighbours: [],
+    };
+  });
 
 export const MAZE_TYPES = {
   BACKTRACKING: 'BACKTRACKING',
