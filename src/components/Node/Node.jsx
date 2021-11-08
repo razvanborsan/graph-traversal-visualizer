@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/layout';
@@ -27,35 +27,83 @@ import {
 } from './constants';
 import * as styles from './Node.module.scss';
 
-const MotionBox = motion(Box);
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
+const MotionBox = motion(Box);
 export default function Node({
+  coords,
   controlState,
   walls,
   maze,
   mazeType,
   delays,
   isMazeAnimated,
+  setStartPointCoords,
+  setEndPointCoords,
 }) {
   const controls = useAnimation();
+
+  const onStartDrag = (event, info, nodeType) => {
+    let squaresX;
+    let squaresY;
+    const { x, y } = info.offset;
+    const { width, height } = graphVertice;
+
+    if (x >= 0) {
+      squaresX =
+        x - width / 2 > 0 ? Math.floor((x - width / 2) / width) + 1 : 0;
+    } else {
+      squaresX = x + width / 2 < 0 ? Math.floor((x + width / 2) / width) : 0;
+    }
+
+    if (y >= 0) {
+      squaresY =
+        y - height / 2 > 0 ? Math.floor((y - height / 2) / height) + 1 : 0;
+    } else {
+      squaresY = y + height / 2 < 0 ? Math.floor((y + height / 2) / height) : 0;
+    }
+
+    switch (nodeType) {
+      case 'start':
+        setStartPointCoords(
+          `${coords.row + squaresY}-${coords.col + squaresX}`,
+        );
+        break;
+      case 'end':
+        setEndPointCoords(`${coords.row + squaresY}-${coords.col + squaresX}`);
+        break;
+      default:
+        break;
+    }
+  };
 
   const { isStart, isEnd, isWeighted, isVisited, isPartOfFinalRoute } =
     controlState;
   const { keyframeDelay, finalRouteKeyframeDelay } = delays;
+  const prevIsWeighted = usePrevious(controlState.isWeighted);
+  const prevIsVisited = usePrevious(controlState.isVisited);
 
   const variants = {
     visited: {
       backgroundColor: isPartOfFinalRoute ? finalRouteColors : routeColors,
-      scale: isWeighted ? [1, 1.1, 1.15, 1.1, 1] : 1,
+      scale: isWeighted && isVisited ? [1, 1.1, 1.15, 1.1, 1] : 1,
       transition: {
         duration: 1,
         times: getVisitedTimes(),
         delay: keyframeDelay,
+
         backgroundColor: {
           duration: isPartOfFinalRoute ? finalRouteKeyframeDelay : 1,
           times: getVisitedTimes(finalRouteKeyframeDelay),
           delay: keyframeDelay,
         },
+
         scale: {
           duration: 0.25,
           times: getVisitedTimes(finalRouteKeyframeDelay),
@@ -66,27 +114,31 @@ export default function Node({
     },
 
     mazeVisited: {
-      backgroundColor: getMazeColors(mazeType),
-      ...getMazeBorders(walls, mazeType),
-      ...(isMazeAnimated && {
-        transition: {
-          duration: 0.05,
-          delay: maze.firstVisitDelay,
-          backgroundColor: {
-            duration: maze.lastVisitDelay - maze.firstVisitDelay,
-            delay: maze.firstVisitDelay,
-            times: [0.999, 1],
-          },
-          ...getMazeBordersTransition(maze, mazeType),
-        },
+      scale: 1,
+      ...(((!isWeighted && !prevIsWeighted) || prevIsVisited) && {
+        backgroundColor: getMazeColors(mazeType),
       }),
+      ...(((!isWeighted && !prevIsWeighted) || prevIsVisited) && {
+        ...getMazeBorders(walls, mazeType),
+      }),
+      ...(isMazeAnimated &&
+        ((!isWeighted && !prevIsWeighted) || prevIsVisited) && {
+          transition: {
+            duration: 0.05,
+            delay: maze.firstVisitDelay,
+            backgroundColor: {
+              duration: maze.lastVisitDelay - maze.firstVisitDelay,
+              delay: maze.firstVisitDelay,
+              times: [0.999, 1],
+            },
+            ...getMazeBordersTransition(maze, mazeType),
+          },
+        }),
     },
     start: {
-      ...getMazeBorders(walls, mazeType),
       backgroundColor: finalRouteBackground,
     },
     end: {
-      ...getMazeBorders(walls, mazeType),
       backgroundColor: finalRouteBackground,
     },
     idle: {
@@ -119,8 +171,64 @@ export default function Node({
       variants={variants}
       animate={controls}
     >
-      {isStart ? <FontAwesomeIcon icon={faHourglassStart} /> : ''}
-      {isEnd ? <FontAwesomeIcon icon={faHourglassEnd} /> : ''}
+      {isStart && (
+        <MotionBox
+          drag
+          dragConstraints={{
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          layoutId="start"
+          initial="false"
+          dragElastic={1}
+          style={{
+            width: graphVertice.width,
+            height: graphVertice.height,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          whileHover={{
+            backgroundColor: colors.brightGold,
+            scale: 1.05,
+            cursor: 'pointer',
+          }}
+          onDragEnd={(event, info) => onStartDrag(event, info, 'start')}
+        >
+          <FontAwesomeIcon icon={faHourglassStart} />
+        </MotionBox>
+      )}
+      {isEnd && (
+        <MotionBox
+          drag
+          dragConstraints={{
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          layoutId="start"
+          initial="false"
+          dragElastic={1}
+          style={{
+            width: graphVertice.width,
+            height: graphVertice.height,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          whileHover={{
+            backgroundColor: colors.brightGold,
+            scale: 1.05,
+            cursor: 'pointer',
+          }}
+          onDragEnd={(event, info) => onStartDrag(event, info, 'end')}
+        >
+          <FontAwesomeIcon icon={faHourglassEnd} />
+        </MotionBox>
+      )}
       {isWeighted ? (
         <FontAwesomeIcon style={{ color: colors.anchorBlue }} icon={faAnchor} />
       ) : (
@@ -129,8 +237,13 @@ export default function Node({
     </MotionBox>
   );
 }
-
 Node.propTypes = {
+  coords: PropTypes.shape({
+    row: PropTypes.number.isRequired,
+    col: PropTypes.number.isRequired,
+  }).isRequired,
+  setStartPointCoords: PropTypes.func.isRequired,
+  setEndPointCoords: PropTypes.func.isRequired,
   controlState: PropTypes.shape({
     isStart: PropTypes.bool.isRequired,
     isEnd: PropTypes.bool.isRequired,

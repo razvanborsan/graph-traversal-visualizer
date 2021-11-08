@@ -26,28 +26,41 @@ export default function dfs(adjacencyList, start, handleSetVisitedNodes) {
     visited.push(currentNode);
 
     neighbours.forEach((neighbour) => {
-      if (neighbour.controlState.isEnd) {
+      const originalNeighbourNode = deepCloneAdjacencyList.get(
+        getNodeKey(neighbour),
+      );
+
+      if (originalNeighbourNode.controlState.isEnd) {
         // The last node must remember the route from itself back to the starting point
         currentNode.routeToStart.forEach((value, key) => {
-          neighbour.routeToStart.set(key, value);
+          originalNeighbourNode.routeToStart.set(key, value);
         });
-        neighbour.routeToStart.set(getNodeKey(currentNode), currentNode);
-        neighbour.delays.keyframeDelay = keyframeDelay;
+        originalNeighbourNode.routeToStart.set(
+          getNodeKey(currentNode),
+          currentNode,
+        );
+        originalNeighbourNode.delays.keyframeDelay = keyframeDelay;
 
         // Copy the route from start to target separately
-        finalRoute = neighbour.routeToStart;
+        finalRoute = originalNeighbourNode.routeToStart;
 
         foundTarget = true;
         return;
       }
 
-      if (!visited.find((node) => node.id === neighbour.id) && !foundTarget) {
+      if (
+        !visited.find((node) => node.id === originalNeighbourNode.id) &&
+        !foundTarget
+      ) {
         // Every node remembers the route from itself back to the starting point
         currentNode.routeToStart.forEach((value, key) => {
-          neighbour.routeToStart.set(key, value);
+          originalNeighbourNode.routeToStart.set(key, value);
         });
-        neighbour.routeToStart.set(getNodeKey(currentNode), currentNode);
-        loop(neighbour);
+        originalNeighbourNode.routeToStart.set(
+          getNodeKey(currentNode),
+          currentNode,
+        );
+        loop(originalNeighbourNode);
       }
     });
   }
@@ -69,13 +82,17 @@ export default function dfs(adjacencyList, start, handleSetVisitedNodes) {
     const visitedBeforeCurrentNode = visited.slice(0, currentNodeVisitedIndex);
 
     // This is the number of nodes that have been visited but are not leading to the target
-    const dissipatedNodes = visitedBeforeCurrentNode?.length
-      - visitedBeforeCurrentNode?.filter((node) => finalRoute?.has(buildNodeKey(node.coords.row, node.coords.col)))?.length;
+    const dissipatedNodes =
+      visitedBeforeCurrentNode?.length -
+      visitedBeforeCurrentNode?.filter((node) =>
+        finalRoute?.has(buildNodeKey(node.coords.row, node.coords.col)),
+      )?.length;
 
     // When animating the final route from start to end,
     // we remove the delay time it took to animate all the nodes not leading to the target
     // The last keyframeDelay is the entire duration of the animation
-    node.delays.finalRouteKeyframeDelay = keyframeDelay - dissipatedNodes * DFS_DELAY;
+    node.delays.finalRouteKeyframeDelay =
+      keyframeDelay - dissipatedNodes * DFS_DELAY;
   });
 
   handleSetVisitedNodes([...visited]);

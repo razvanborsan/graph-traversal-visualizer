@@ -1,4 +1,4 @@
-import { getNodeKey, buildNodeKey } from 'components/GraphVisualizer/helpers';
+import { getNodeKey } from 'components/GraphVisualizer/helpers';
 
 const getBFSDelay = (node) => node.routeToStart.size / 20;
 
@@ -13,55 +13,70 @@ export default function bfs(
   adjacencyList.forEach((value, key) => {
     deepCloneAdjacencyList.set(key, value);
   });
+
   const deepCloneStartNode = deepCloneAdjacencyList.get(getNodeKey(start));
 
   const visited = [];
   const nodesToVisitQueue = [deepCloneStartNode];
   let keyframeDelay = 0;
   let isTargetFound = false;
-  let finalRoute = new Map();
 
   // run while there are still nodes left to visit
   while (nodesToVisitQueue.length > 0) {
     const currentNode = nodesToVisitQueue.shift();
     currentNode.controlState.isVisited = true;
     currentNode.delays.keyframeDelay = getBFSDelay(currentNode);
+
     visited.push(currentNode);
 
     const { neighbours } = currentNode;
     neighbours.forEach((neighbour) => {
-      if (neighbour.controlState.isEnd) {
+      const originalNeighbourNode = deepCloneAdjacencyList.get(
+        getNodeKey(neighbour),
+      );
+
+      if (originalNeighbourNode.controlState.isEnd) {
         currentNode.routeToStart.forEach((value, key) => {
-          neighbour.routeToStart.set(key, value);
+          originalNeighbourNode.routeToStart.set(key, value);
         });
-        neighbour.routeToStart.set(getNodeKey(currentNode), currentNode);
+        originalNeighbourNode.routeToStart.set(
+          getNodeKey(currentNode),
+          currentNode,
+        );
 
         keyframeDelay = getBFSDelay(currentNode);
-        neighbour.delays.keyframeDelay = keyframeDelay;
-
-        finalRoute = neighbour.routeToStart;
+        originalNeighbourNode.delays.keyframeDelay = keyframeDelay;
 
         isTargetFound = true;
 
         return undefined;
       }
-      if (!visited.find((node) => node.id === neighbour.id) && !isTargetFound) {
+      if (
+        !visited.find((node) => node.id === originalNeighbourNode.id) &&
+        !isTargetFound
+      ) {
         currentNode.routeToStart.forEach((value, key) => {
-          neighbour.routeToStart.set(key, value);
+          originalNeighbourNode.routeToStart.set(key, value);
         });
-        neighbour.routeToStart.set(getNodeKey(currentNode), currentNode);
-        nodesToVisitQueue.push(neighbour);
+        originalNeighbourNode.routeToStart.set(
+          getNodeKey(currentNode),
+          currentNode,
+        );
+        nodesToVisitQueue.push(originalNeighbourNode);
       }
     });
   }
 
+  let endNode = null;
   deepCloneAdjacencyList.forEach((node) => {
-    const { row, col } = node.coords;
+    if (node.controlState.isEnd) {
+      endNode = node;
+    }
+  });
 
-    const nodeKey = buildNodeKey(row, col);
-    const isPartOfFinalRoute = finalRoute?.has(nodeKey) || false;
+  endNode.routeToStart.forEach((node) => {
+    node.controlState.isPartOfFinalRoute = true;
 
-    node.controlState.isPartOfFinalRoute = isPartOfFinalRoute;
     node.delays.finalRouteKeyframeDelay = keyframeDelay;
   });
 

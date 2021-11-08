@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Select, Box, Checkbox } from '@chakra-ui/react';
-import { Flex, Wrap, Spacer } from '@chakra-ui/layout';
+import { Button, Select, Checkbox } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/layout';
 
 import {
   bfs,
@@ -13,12 +13,17 @@ import {
   recursiveDivision,
 } from 'algorithms';
 
+import Pathfinder from './Pathfinder';
+
 import {
   addEdge,
   buildNodeKey,
+  changeWeights,
   findDirection,
   getNodeElements,
   getNodeKey,
+  removeWeights,
+  resetPath,
 } from './helpers';
 
 import {
@@ -40,7 +45,10 @@ export default function GraphVisualizer() {
   const [mazeType, setMazeType] = useState(MAZE_TYPES.BACKTRACKING);
   const [pathfinderAlgo, setPathfinderAlgo] = useState('bfs');
   const [snapshot, setSnapshot] = useState([]);
-  const initialNodes = getInitialNodes();
+  const [weights, setWeights] = useState(false);
+  const [startPointCoords, setStartPointCoords] = useState('5-10');
+  const [endPointCoords, setEndPointCoords] = useState('5-25');
+  const [isMazeBuild, setIsMazeBuild] = useState(false);
 
   const handleSetVisitedNodes = (visited) => {
     setVisitedNodes(visited);
@@ -54,24 +62,81 @@ export default function GraphVisualizer() {
     setSnapshot(visited);
   };
 
-  const startPoint = (deepClone) => {
-    const startNode = deepClone.get('0-0');
+  const handleSetEnableFindPath = (value) => {
+    setEnableFindPath(value);
+  };
+
+  const handleSetAnimateIfNotPathReset = (value) => {
+    setAnimateIfNotPathReset(value);
+  };
+
+  const handlers = {
+    handleSetVisitedNodes,
+    handleSetAdjacencyList,
+    handleSetSnapshot,
+    handleSetEnableFindPath,
+    handleSetAnimateIfNotPathReset,
+  };
+
+  // If the start/end points are moved, reset the current path
+  useEffect(() => {
+    if (adjacencyList) {
+      resetPath(
+        handlers,
+        snapshot,
+        adjacencyList,
+        startPointCoords,
+        endPointCoords,
+      );
+    }
+  }, [startPointCoords, endPointCoords]);
+
+  const changeStartPoint = (deepClone) => {
+    deepClone.forEach((value) => {
+      value.controlState.isStart = false;
+      value.routeToStart = new Map();
+      value.neighbours = value.neighbours.map((neighbour) => ({
+        ...neighbour,
+        routeToStart: new Map(),
+      }));
+    });
+    const startNode = deepClone.get(startPointCoords);
 
     startNode.controlState.isStart = true;
     startNode.controlState.isWeighted = false;
     setNodeElements(() => [
-      ...getNodeElements(deepClone, mazeType, isMazeAnimated),
+      ...getNodeElements(
+        deepClone,
+        mazeType,
+        isMazeAnimated,
+        setStartPointCoords,
+        setEndPointCoords,
+      ),
     ]);
     setAdjacencyList(deepClone);
   };
 
-  const endPoint = (deepClone) => {
-    const startNode = deepClone.get('5-25');
+  const changeEndPoint = (deepClone) => {
+    deepClone.forEach((value) => {
+      value.controlState.isEnd = false;
+      value.routeToStart = new Map();
+      value.neighbours = value.neighbours.map((neighbour) => ({
+        ...neighbour,
+        routeToStart: new Map(),
+      }));
+    });
+    const endNode = deepClone.get(endPointCoords);
 
-    startNode.controlState.isEnd = true;
-    startNode.controlState.isWeighted = false;
+    endNode.controlState.isEnd = true;
+    endNode.controlState.isWeighted = false;
     setNodeElements(() => [
-      ...getNodeElements(deepClone, mazeType, isMazeAnimated),
+      ...getNodeElements(
+        deepClone,
+        mazeType,
+        isMazeAnimated,
+        setStartPointCoords,
+        setEndPointCoords,
+      ),
     ]);
     setAdjacencyList(deepClone);
   };
@@ -79,14 +144,17 @@ export default function GraphVisualizer() {
   useEffect(() => {
     if (reset) {
       setReset(false);
+      setWeights(false);
+
+      const noWeightsInitialNodes = getInitialNodes(false);
 
       // This function runs only once; we build the graph here
       const deepClone = new Map();
-      initialNodes.forEach((node) => {
+      noWeightsInitialNodes.forEach((node) => {
         deepClone.set(getNodeKey(node), node);
       });
 
-      initialNodes.forEach((node) => {
+      noWeightsInitialNodes.forEach((node) => {
         const { row, col } = node.coords;
         const { x, y } = possibleNeighbourCoords;
 
@@ -99,15 +167,8 @@ export default function GraphVisualizer() {
         }
       });
 
-      const nodeElementsArray = getNodeElements(
-        deepClone,
-        mazeType,
-        isMazeAnimated,
-      );
-      setNodeElements(() => [...nodeElementsArray]);
-      setAdjacencyList(deepClone);
-      startPoint(deepClone);
-      endPoint(deepClone);
+      changeStartPoint(deepClone);
+      changeEndPoint(deepClone);
     }
   }, [reset]);
 
@@ -156,6 +217,8 @@ export default function GraphVisualizer() {
         deepClone,
         mazeType,
         isMazeAnimated && animateIfNotPathReset,
+        setStartPointCoords,
+        setEndPointCoords,
       );
       setAnimateIfNotPathReset(true);
       setNodeElements(() => [...nodeElementsArray]);
@@ -165,124 +228,25 @@ export default function GraphVisualizer() {
 
   return (
     <>
-      <Wrap
+      <Pathfinder elements={nodeElements} />
+      <Box
         style={{
-          width: 1080,
-          paddingBottom: 25,
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignitems: 'flex-start',
+          gap: 15,
+          marginBottom: 15,
         }}
       >
-        {nodeElements}
-      </Wrap>
-
-      <Flex>
-        <Box style={{ width: 230 }}>
-          <Select
-            onChange={(e) => {
-              setPathfinderAlgo(e.target.value);
-            }}
-          >
-            <option value="bfs">Breadth First Search</option>
-            <option value="dfs">Depth First Search</option>
-            <option value="dijkstra">Dijkstra's Algorithm</option>
-          </Select>
-        </Box>
-        <Spacer />
-
-        <Button
-          colorScheme="teal"
-          disabled={!enableFindPath}
-          onClick={() => {
-            setEnableFindPath(false);
-            switch (pathfinderAlgo) {
-              case 'dfs':
-                dfs(
-                  adjacencyList,
-                  adjacencyList.get('0-0'),
-                  handleSetVisitedNodes,
-                  handleSetAdjacencyList,
-                );
-                break;
-              case 'bfs':
-                bfs(
-                  adjacencyList,
-                  adjacencyList.get('0-0'),
-                  handleSetVisitedNodes,
-                  handleSetAdjacencyList,
-                );
-                break;
-              case 'dijkstra':
-                dijkstra(
-                  adjacencyList,
-                  adjacencyList.get('0-0'),
-                  handleSetVisitedNodes,
-                  handleSetAdjacencyList,
-                );
-                break;
-              default:
-            }
-          }}
-        >
-          Find path
-        </Button>
-        <Spacer />
-
-        <Button
-          colorScheme="red"
-          onClick={() => {
-            setEnableFindPath(true);
-            setAnimateIfNotPathReset(false);
-            setVisitedNodes(
-              [...snapshot].map((value) => ({
-                ...value,
-                controlState: {
-                  ...value.controlState,
-                  isVisited: false,
-                  isPartOfFinalRoute: false,
-                },
-                neighbours: value.neighbours.map((neighbour) => ({
-                  ...neighbour,
-                  controlState: {
-                    ...neighbour.controlState,
-                    isVisited: false,
-                  },
-                })),
-                routeToStart: new Map(),
-              })),
-            );
-
-            const deepClone = new Map();
-            adjacencyList.forEach((value, key) =>
-              deepClone.set(key, {
-                ...value,
-                controlState: {
-                  ...value.controlState,
-                  isVisited: false,
-                  isPartOfFinalRoute: false,
-                },
-                neighbours: value.neighbours.map((neighbour) => ({
-                  ...neighbour,
-                  controlState: {
-                    ...neighbour.controlState,
-                    isVisited: false,
-                  },
-                })),
-                routeToStart: new Map(),
-              }),
-            );
-            setAdjacencyList(deepClone);
-          }}
-        >
-          Reset path
-        </Button>
-        <Spacer />
-
         <Box style={{ width: 230 }}>
           <Select
             onChange={(e) => {
               setEnableStart(true);
               setReset(true);
               setVisitedNodes([]);
+              setIsMazeBuild(false);
               setMazeType(e.target.value);
+              setPathfinderAlgo('bfs');
             }}
           >
             <option value={MAZE_TYPES.BACKTRACKING}>
@@ -295,9 +259,6 @@ export default function GraphVisualizer() {
             </option>
           </Select>
         </Box>
-
-        <Spacer />
-
         <Checkbox
           colorScheme="green"
           onChange={() => setIsMazeAnimated(!isMazeAnimated)}
@@ -305,19 +266,37 @@ export default function GraphVisualizer() {
         >
           Animate maze
         </Checkbox>
-        <Spacer />
+        <Button
+          disabled={
+            !isMazeBuild || pathfinderAlgo !== 'dijkstra' || !enableFindPath
+          }
+          onClick={() =>
+            changeWeights(
+              weights,
+              visitedNodes,
+              changeStartPoint,
+              handleSetSnapshot,
+              setWeights,
+              handleSetVisitedNodes,
+              adjacencyList,
+            )
+          }
+        >
+          Change Weigths
+        </Button>
 
         <Button
           colorScheme="teal"
           disabled={!enableStart}
           onClick={() => {
+            setIsMazeBuild(true);
             setEnableStart(false);
             setEnableFindPath(true);
             switch (mazeType) {
               case MAZE_TYPES.BACKTRACKING:
                 recursiveBacktracking(
                   adjacencyList,
-                  adjacencyList.get('0-0'),
+                  adjacencyList.get(startPointCoords),
                   handleSetVisitedNodes,
                   handleSetSnapshot,
                 );
@@ -342,19 +321,112 @@ export default function GraphVisualizer() {
         >
           Build Maze
         </Button>
-
-        <Spacer />
-
         <Button
           colorScheme="red"
           onClick={() => {
+            setIsMazeBuild(false);
             setEnableStart(true);
             setReset(true);
           }}
         >
           Reset Maze
         </Button>
-      </Flex>
+      </Box>
+      <Box
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignitems: 'flex-start',
+          gap: 15,
+          marginBottom: 15,
+        }}
+      >
+        <Box style={{ width: 230 }}>
+          <Select
+            disabled={!enableFindPath || !isMazeBuild}
+            value={pathfinderAlgo}
+            onChange={(e) => {
+              if (e.target.value !== 'dijkstra') {
+                removeWeights(
+                  weights,
+                  visitedNodes,
+                  changeStartPoint,
+                  handleSetSnapshot,
+                  setWeights,
+                  handleSetVisitedNodes,
+                  adjacencyList,
+                );
+              } else {
+                changeWeights(
+                  weights,
+                  visitedNodes,
+                  changeStartPoint,
+                  handleSetSnapshot,
+                  setWeights,
+                  handleSetVisitedNodes,
+                  adjacencyList,
+                );
+              }
+              setPathfinderAlgo(e.target.value);
+            }}
+          >
+            <option value="bfs">Breadth First Search</option>
+            <option value="dfs">Depth First Search</option>
+            <option value="dijkstra">Dijkstra's Algorithm</option>
+          </Select>
+        </Box>
+        <Button
+          colorScheme="teal"
+          disabled={!enableFindPath || !isMazeBuild}
+          onClick={() => {
+            setEnableFindPath(false);
+            switch (pathfinderAlgo) {
+              case 'dfs':
+                dfs(
+                  adjacencyList,
+                  adjacencyList.get(startPointCoords),
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                );
+                break;
+              case 'bfs':
+                bfs(
+                  adjacencyList,
+                  adjacencyList.get(startPointCoords),
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                );
+                break;
+              case 'dijkstra':
+                dijkstra(
+                  adjacencyList,
+                  adjacencyList.get(startPointCoords),
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                );
+                break;
+              default:
+            }
+          }}
+        >
+          Find path
+        </Button>
+
+        <Button
+          colorScheme="red"
+          onClick={() => {
+            resetPath(
+              handlers,
+              snapshot,
+              adjacencyList,
+              startPointCoords,
+              endPointCoords,
+            );
+          }}
+        >
+          Reset path
+        </Button>
+      </Box>
     </>
   );
 }

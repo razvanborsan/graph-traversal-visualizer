@@ -19,7 +19,9 @@ export const MAZE = {
   ROWS: 15,
 };
 
-export const getInitialNodes = () =>
+export const getWeight = (random) => (random ? 15 : 1);
+
+export const getInitialNodes = (hasWeights) =>
   [...Array(MAZE.COLS * MAZE.ROWS)].map((_, index) => {
     const random = Math.random() > 0.95;
 
@@ -34,7 +36,7 @@ export const getInitialNodes = () =>
         isEnd: false,
         isVisited: false,
         isPartOfFinalRoute: false,
-        isWeighted: random,
+        isWeighted: hasWeights ? random : false,
       },
       routeToStart: new Map(),
       maze: {
@@ -61,7 +63,7 @@ export const getInitialNodes = () =>
         south: true,
         west: true,
       },
-      weight: random ? 15 : 1,
+      weight: hasWeights ? getWeight(random) : 1,
       neighbours: [],
     };
   });

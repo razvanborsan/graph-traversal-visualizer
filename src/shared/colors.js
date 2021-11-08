@@ -1,6 +1,6 @@
 const colors = {
   yellow: '#FFDF65',
-  brightGold: '#EEAD59',
+  brightGold: '#F2BA52',
 
   brightCyan: '#3AAFA9',
   brightBlue: '#58B8ED',
