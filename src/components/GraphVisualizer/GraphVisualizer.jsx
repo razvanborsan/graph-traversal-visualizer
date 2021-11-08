@@ -7,6 +7,7 @@ import {
   bfs,
   dfs,
   dijkstra,
+  astar,
   recursiveBacktracking,
   eller,
   prim,
@@ -268,7 +269,9 @@ export default function GraphVisualizer() {
         </Checkbox>
         <Button
           disabled={
-            !isMazeBuild || pathfinderAlgo !== 'dijkstra' || !enableFindPath
+            !isMazeBuild ||
+            (pathfinderAlgo !== 'dijkstra' && pathfinderAlgo !== 'astar') ||
+            !enableFindPath
           }
           onClick={() =>
             changeWeights(
@@ -346,7 +349,7 @@ export default function GraphVisualizer() {
             disabled={!enableFindPath || !isMazeBuild}
             value={pathfinderAlgo}
             onChange={(e) => {
-              if (e.target.value !== 'dijkstra') {
+              if (e.target.value === 'bfs' || e.target === 'dfs') {
                 removeWeights(
                   weights,
                   visitedNodes,
@@ -356,7 +359,13 @@ export default function GraphVisualizer() {
                   handleSetVisitedNodes,
                   adjacencyList,
                 );
-              } else {
+              }
+
+              if (
+                (e.target.value === 'dijkstra' || e.target.value === 'astar') &&
+                pathfinderAlgo !== 'dijkstra' &&
+                pathfinderAlgo !== 'astar'
+              ) {
                 changeWeights(
                   weights,
                   visitedNodes,
@@ -373,6 +382,7 @@ export default function GraphVisualizer() {
             <option value="bfs">Breadth First Search</option>
             <option value="dfs">Depth First Search</option>
             <option value="dijkstra">Dijkstra's Algorithm</option>
+            <option value="astar">A* Algorithm</option>
           </Select>
         </Box>
         <Button
@@ -401,6 +411,15 @@ export default function GraphVisualizer() {
                 dijkstra(
                   adjacencyList,
                   adjacencyList.get(startPointCoords),
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                );
+                break;
+              case 'astar':
+                astar(
+                  adjacencyList,
+                  adjacencyList.get(startPointCoords),
+                  adjacencyList.get(endPointCoords),
                   handleSetVisitedNodes,
                   handleSetAdjacencyList,
                 );
