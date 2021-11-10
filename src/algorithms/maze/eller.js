@@ -4,11 +4,23 @@ import { buildNodeKey } from 'components/GraphVisualizer/helpers';
 export default function eller(
   adjacencyList,
   handleSetVisitedNodes,
+  handleSetAdjacencyList,
   handleSetSnapshot,
+  setEnableFindPath,
+  setEnableResetPath,
 ) {
   const visited = [];
   let uniqueSetNumber = 0;
   let delay = 0;
+
+  // Deep clone the adjacency list so we never modify it directly
+  const deepCloneAdjacencyList = new Map();
+  adjacencyList.forEach((value, key) => {
+    deepCloneAdjacencyList.set(key, {
+      ...value,
+      neighbours: [],
+    });
+  });
 
   for (let row = 0; row < MAZE.ROWS; row += 1) {
     const currentRowVisited = [];
@@ -16,7 +28,7 @@ export default function eller(
       // Assign a unique set for each column in the first row
       for (let col = 0; col < MAZE.COLS; col += 1) {
         const nodeKey = buildNodeKey(row, col);
-        const currNode = adjacencyList.get(nodeKey);
+        const currNode = deepCloneAdjacencyList.get(nodeKey);
 
         currNode.maze.ellerSet = col;
         uniqueSetNumber += 1;
@@ -28,8 +40,8 @@ export default function eller(
         const nodeKey = buildNodeKey(row, col);
         const aboveNodeKey = buildNodeKey(row - 1, col);
 
-        const currNode = adjacencyList.get(nodeKey);
-        const aboveNode = adjacencyList.get(aboveNodeKey);
+        const currNode = deepCloneAdjacencyList.get(nodeKey);
+        const aboveNode = deepCloneAdjacencyList.get(aboveNodeKey);
 
         if (currNode.walls.north === false) {
           currNode.maze.ellerSet = aboveNode.maze.ellerSet;
@@ -47,8 +59,8 @@ export default function eller(
         const nodeKey = buildNodeKey(row, col);
         const nextNodeKey = buildNodeKey(row, col + 1);
 
-        const currNode = adjacencyList.get(nodeKey);
-        const nextNode = adjacencyList.get(nextNodeKey);
+        const currNode = deepCloneAdjacencyList.get(nodeKey);
+        const nextNode = deepCloneAdjacencyList.get(nextNodeKey);
 
         // If the columns are part of different sets,
         // randomly decide to destroy the wall between them
@@ -63,7 +75,8 @@ export default function eller(
 
               for (let column = 0; column < MAZE.COLS; column += 1) {
                 const newUnionNodeKey = buildNodeKey(row, column);
-                const newUnionNode = adjacencyList.get(newUnionNodeKey);
+                const newUnionNode =
+                  deepCloneAdjacencyList.get(newUnionNodeKey);
 
                 if (newUnionNode.maze.ellerSet === setToUnion) {
                   newUnionNode.maze.ellerSet = currNode.maze.ellerSet;
@@ -80,10 +93,10 @@ export default function eller(
       // Every set must have at least one bottom wall destroyed
       for (let col = 0; col < MAZE.COLS; col += 1) {
         const nodeKey = buildNodeKey(row, col);
-        const currNode = adjacencyList.get(nodeKey);
+        const currNode = deepCloneAdjacencyList.get(nodeKey);
 
         const belowNodeKey = buildNodeKey(row + 1, col);
-        const belowNode = adjacencyList.get(belowNodeKey);
+        const belowNode = deepCloneAdjacencyList.get(belowNodeKey);
 
         const currentSetIndex = currNode.maze.ellerSet;
         const currentSet = currentRowVisited.filter(
@@ -120,9 +133,9 @@ export default function eller(
         const nextNodeKey = buildNodeKey(row, col + 1);
         const prevNodeKey = buildNodeKey(row, col - 1);
 
-        const currNode = adjacencyList.get(nodeKey);
-        const nextNode = adjacencyList.get(nextNodeKey);
-        const prevNode = adjacencyList.get(prevNodeKey);
+        const currNode = deepCloneAdjacencyList.get(nodeKey);
+        const nextNode = deepCloneAdjacencyList.get(nextNodeKey);
+        const prevNode = deepCloneAdjacencyList.get(prevNodeKey);
 
         const currentSetIndex = currNode.maze.ellerSet;
         const currentSet = currentRowVisited.filter(
@@ -161,7 +174,7 @@ export default function eller(
     // Add every node of the last row to the visited array
     for (let col = 0; col < MAZE.COLS; col += 1) {
       const nodeKey = buildNodeKey(row, col);
-      const currNode = adjacencyList.get(nodeKey);
+      const currNode = deepCloneAdjacencyList.get(nodeKey);
 
       currNode.maze.firstVisitDelay = delay;
       currNode.maze.lastVisitDelay = delay;
@@ -169,6 +182,12 @@ export default function eller(
       visited.push(currNode);
     }
   }
+
+  setTimeout(() => {
+    setEnableFindPath(true);
+    setEnableResetPath(true);
+  }, 1000 * delay);
   handleSetVisitedNodes([...visited]);
   handleSetSnapshot([...visited]);
+  handleSetAdjacencyList(deepCloneAdjacencyList);
 }

@@ -5,8 +5,8 @@ import { Box } from '@chakra-ui/layout';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faHourglassStart,
-  faHourglassEnd,
+  faPlay,
+  faBullseye,
   faAnchor,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -44,6 +44,7 @@ export default function Node({
   mazeType,
   delays,
   isMazeAnimated,
+  setIsMazeAnimated,
   setStartPointCoords,
   setEndPointCoords,
 }) {
@@ -195,9 +196,10 @@ export default function Node({
             scale: 1.05,
             cursor: 'pointer',
           }}
+          onDragStart={() => setIsMazeAnimated(false)}
           onDragEnd={(event, info) => onStartDrag(event, info, 'start')}
         >
-          <FontAwesomeIcon icon={faHourglassStart} />
+          <FontAwesomeIcon icon={faPlay} />
         </MotionBox>
       )}
       {isEnd && (
@@ -224,9 +226,10 @@ export default function Node({
             scale: 1.05,
             cursor: 'pointer',
           }}
+          onDragStart={() => setIsMazeAnimated(false)}
           onDragEnd={(event, info) => onStartDrag(event, info, 'end')}
         >
-          <FontAwesomeIcon icon={faHourglassEnd} />
+          <FontAwesomeIcon icon={faBullseye} />
         </MotionBox>
       )}
       {isWeighted ? (
@@ -264,6 +267,7 @@ Node.propTypes = {
   }).isRequired,
   mazeType: PropTypes.string.isRequired,
   isMazeAnimated: PropTypes.bool.isRequired,
+  setIsMazeAnimated: PropTypes.func.isRequired,
   delays: PropTypes.shape({
     keyframeDelay: PropTypes.number.isRequired,
     finalRouteKeyframeDelay: PropTypes.number.isRequired,

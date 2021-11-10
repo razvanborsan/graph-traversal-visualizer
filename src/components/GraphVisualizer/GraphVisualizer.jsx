@@ -14,6 +14,8 @@ import {
   recursiveDivision,
 } from 'algorithms';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBackward, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import Pathfinder from './Pathfinder';
 
 import {
@@ -42,7 +44,8 @@ export default function GraphVisualizer() {
   const [animateIfNotPathReset, setAnimateIfNotPathReset] = useState(true);
   const [reset, setReset] = useState(true);
   const [enableStart, setEnableStart] = useState(true);
-  const [enableFindPath, setEnableFindPath] = useState(false);
+  const [enableFindPath, setEnableFindPath] = useState(true);
+  const [enableResetPath, setEnableResetPath] = useState(true);
   const [mazeType, setMazeType] = useState(MAZE_TYPES.BACKTRACKING);
   const [pathfinderAlgo, setPathfinderAlgo] = useState('bfs');
   const [snapshot, setSnapshot] = useState([]);
@@ -79,6 +82,34 @@ export default function GraphVisualizer() {
     handleSetAnimateIfNotPathReset,
   };
 
+  useEffect(() => {
+    if (adjacencyList) {
+      if (pathfinderAlgo === 'bfs' || pathfinderAlgo === 'dfs') {
+        removeWeights(
+          weights,
+          visitedNodes,
+          changeStartPoint,
+          handleSetSnapshot,
+          setWeights,
+          handleSetVisitedNodes,
+          adjacencyList,
+        );
+      }
+
+      if (pathfinderAlgo === 'dijkstra' || pathfinderAlgo === 'astar') {
+        changeWeights(
+          weights,
+          visitedNodes,
+          changeStartPoint,
+          handleSetSnapshot,
+          setWeights,
+          handleSetVisitedNodes,
+          adjacencyList,
+        );
+      }
+    }
+  }, [pathfinderAlgo]);
+
   // If the start/end points are moved, reset the current path
   useEffect(() => {
     if (adjacencyList) {
@@ -110,6 +141,7 @@ export default function GraphVisualizer() {
         deepClone,
         mazeType,
         isMazeAnimated,
+        setIsMazeAnimated,
         setStartPointCoords,
         setEndPointCoords,
       ),
@@ -135,10 +167,12 @@ export default function GraphVisualizer() {
         deepClone,
         mazeType,
         isMazeAnimated,
+        setIsMazeAnimated,
         setStartPointCoords,
         setEndPointCoords,
       ),
     ]);
+
     setAdjacencyList(deepClone);
   };
 
@@ -163,6 +197,7 @@ export default function GraphVisualizer() {
           const neighbourKey = buildNodeKey(row + x[i], col + y[i]);
 
           if (deepClone.has(neighbourKey)) {
+            addEdge(...[node, deepClone.get(neighbourKey)]);
             addEdge(...[node.maze, deepClone.get(neighbourKey)]);
           }
         }
@@ -213,19 +248,21 @@ export default function GraphVisualizer() {
           }
         }
       });
+    }
 
+    if (adjacencyList) {
       const nodeElementsArray = getNodeElements(
-        deepClone,
+        adjacencyList,
         mazeType,
         isMazeAnimated && animateIfNotPathReset,
+        setIsMazeAnimated,
         setStartPointCoords,
         setEndPointCoords,
       );
       setAnimateIfNotPathReset(true);
       setNodeElements(() => [...nodeElementsArray]);
-      setAdjacencyList(deepClone);
     }
-  }, [visitedNodes]);
+  }, [visitedNodes, startPointCoords, endPointCoords]);
 
   return (
     <>
@@ -242,12 +279,12 @@ export default function GraphVisualizer() {
         <Box style={{ width: 230 }}>
           <Select
             onChange={(e) => {
-              setEnableStart(true);
-              setReset(true);
-              setVisitedNodes([]);
               setIsMazeBuild(false);
-              setMazeType(e.target.value);
+              setEnableStart(true);
+              setEnableFindPath(true);
               setPathfinderAlgo('bfs');
+              setReset(true);
+              setMazeType(e.target.value);
             }}
           >
             <option value={MAZE_TYPES.BACKTRACKING}>
@@ -290,11 +327,15 @@ export default function GraphVisualizer() {
 
         <Button
           colorScheme="teal"
-          disabled={!enableStart}
+          disabled={!enableStart || !enableFindPath}
           onClick={() => {
             setIsMazeBuild(true);
             setEnableStart(false);
-            setEnableFindPath(true);
+            if (isMazeAnimated) {
+              setEnableFindPath(false);
+              setEnableResetPath(false);
+            }
+            setPathfinderAlgo('bfs');
             switch (mazeType) {
               case MAZE_TYPES.BACKTRACKING:
                 recursiveBacktracking(
@@ -302,13 +343,30 @@ export default function GraphVisualizer() {
                   adjacencyList.get(startPointCoords),
                   handleSetVisitedNodes,
                   handleSetSnapshot,
+                  handleSetAdjacencyList,
+                  setEnableFindPath,
+                  setEnableResetPath,
                 );
                 break;
               case MAZE_TYPES.ELLER:
-                eller(adjacencyList, handleSetVisitedNodes, handleSetSnapshot);
+                eller(
+                  adjacencyList,
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                  handleSetSnapshot,
+                  setEnableFindPath,
+                  setEnableResetPath,
+                );
                 break;
               case MAZE_TYPES.PRIM:
-                prim(adjacencyList, handleSetVisitedNodes, handleSetSnapshot);
+                prim(
+                  adjacencyList,
+                  handleSetVisitedNodes,
+                  handleSetAdjacencyList,
+                  handleSetSnapshot,
+                  setEnableFindPath,
+                  setEnableResetPath,
+                );
                 break;
               case MAZE_TYPES.RECURSIVE_DIVISION:
                 recursiveDivision(
@@ -316,6 +374,8 @@ export default function GraphVisualizer() {
                   handleSetVisitedNodes,
                   handleSetAdjacencyList,
                   handleSetSnapshot,
+                  setEnableFindPath,
+                  setEnableResetPath,
                 );
                 break;
               default:
@@ -329,6 +389,8 @@ export default function GraphVisualizer() {
           onClick={() => {
             setIsMazeBuild(false);
             setEnableStart(true);
+            setEnableFindPath(true);
+            setPathfinderAlgo('bfs');
             setReset(true);
           }}
         >
@@ -346,37 +408,17 @@ export default function GraphVisualizer() {
       >
         <Box style={{ width: 230 }}>
           <Select
-            disabled={!enableFindPath || !isMazeBuild}
+            // disabled={!enableFindPath}
             value={pathfinderAlgo}
             onChange={(e) => {
-              if (e.target.value === 'bfs' || e.target === 'dfs') {
-                removeWeights(
-                  weights,
-                  visitedNodes,
-                  changeStartPoint,
-                  handleSetSnapshot,
-                  setWeights,
-                  handleSetVisitedNodes,
-                  adjacencyList,
-                );
-              }
-
-              if (
-                (e.target.value === 'dijkstra' || e.target.value === 'astar') &&
-                pathfinderAlgo !== 'dijkstra' &&
-                pathfinderAlgo !== 'astar'
-              ) {
-                changeWeights(
-                  weights,
-                  visitedNodes,
-                  changeStartPoint,
-                  handleSetSnapshot,
-                  setWeights,
-                  handleSetVisitedNodes,
-                  adjacencyList,
-                );
-              }
               setPathfinderAlgo(e.target.value);
+              resetPath(
+                handlers,
+                snapshot,
+                adjacencyList,
+                startPointCoords,
+                endPointCoords,
+              );
             }}
           >
             <option value="bfs">Breadth First Search</option>
@@ -387,7 +429,7 @@ export default function GraphVisualizer() {
         </Box>
         <Button
           colorScheme="teal"
-          disabled={!enableFindPath || !isMazeBuild}
+          disabled={!enableFindPath}
           onClick={() => {
             setEnableFindPath(false);
             switch (pathfinderAlgo) {
@@ -400,13 +442,6 @@ export default function GraphVisualizer() {
                 );
                 break;
               case 'bfs':
-                bfs(
-                  adjacencyList,
-                  adjacencyList.get(startPointCoords),
-                  handleSetVisitedNodes,
-                  handleSetAdjacencyList,
-                );
-                break;
               case 'dijkstra':
                 dijkstra(
                   adjacencyList,
@@ -428,11 +463,12 @@ export default function GraphVisualizer() {
             }
           }}
         >
-          Find path
+          <FontAwesomeIcon icon={faPlayCircle} />
         </Button>
 
         <Button
           colorScheme="red"
+          disabled={!enableResetPath}
           onClick={() => {
             resetPath(
               handlers,
@@ -443,7 +479,7 @@ export default function GraphVisualizer() {
             );
           }}
         >
-          Reset path
+          <FontAwesomeIcon icon={faBackward} />
         </Button>
       </Box>
     </>

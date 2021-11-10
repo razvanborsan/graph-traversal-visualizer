@@ -61,7 +61,7 @@ export const removeWallBetweenNodes = (rootNode, neighbourNode) => {
 };
 
 export function addEdge(origin, destination) {
-  if (!origin.neighbours.find((node) => node.id === destination.id)) {
+  if (!origin.neighbours.some((node) => node?.id === destination?.id)) {
     origin.neighbours.push(destination);
   }
 }
@@ -70,6 +70,7 @@ export const getNodeElements = (
   adjacencyList,
   mazeType,
   isMazeAnimated,
+  setIsMazeAnimated,
   setStartPointCoords,
   setEndPointCoords,
 ) => {
@@ -81,6 +82,7 @@ export const getNodeElements = (
           coords={value.coords}
           controlState={value.controlState}
           isMazeAnimated={isMazeAnimated}
+          setIsMazeAnimated={setIsMazeAnimated}
           weight={value.weight}
           maze={value.maze}
           mazeType={mazeType}
@@ -101,7 +103,7 @@ export function resetPath(
   snapshot,
   adjacencyList,
   startPointCoords,
-  setEndPointCoords,
+  endPointCoords,
 ) {
   const {
     handleSetEnableFindPath,
@@ -118,21 +120,22 @@ export function resetPath(
       controlState: {
         ...value.controlState,
         isEnd:
-          buildNodeKey(value.coords.row, value.coords.col) ===
-          setEndPointCoords,
+          buildNodeKey(value.coords.row, value.coords.col) === endPointCoords,
         isStart:
           buildNodeKey(value.coords.row, value.coords.col) === startPointCoords,
         isVisited: false,
         isPartOfFinalRoute: false,
       },
-      neighbours: value.neighbours.map((neighbour) => ({
-        ...neighbour,
-        controlState: {
-          ...neighbour.controlState,
-          isVisited: false,
-        },
-        routeToStart: new Map(),
-      })),
+      neighbours: value.neighbours
+        .filter((neighbour) => typeof neighbour !== 'undefined')
+        .map((neighbour) => ({
+          ...neighbour,
+          controlState: {
+            ...neighbour.controlState,
+            isVisited: false,
+          },
+          routeToStart: new Map(),
+        })),
       routeToStart: new Map(),
     })),
   );
@@ -145,27 +148,28 @@ export function resetPath(
       controlState: {
         ...value.controlState,
         isEnd:
-          buildNodeKey(value.coords.row, value.coords.col) ===
-          setEndPointCoords,
+          buildNodeKey(value.coords.row, value.coords.col) === endPointCoords,
         isStart:
           buildNodeKey(value.coords.row, value.coords.col) === startPointCoords,
         isVisited: false,
         isPartOfFinalRoute: false,
       },
-      neighbours: value.neighbours.map((neighbour) => ({
-        ...neighbour,
-        controlState: {
-          ...neighbour.controlState,
-          isEnd:
-            buildNodeKey(value.coords.row, value.coords.col) ===
-            setEndPointCoords,
-          isStart:
-            buildNodeKey(neighbour.coords.row, neighbour.coords.col) ===
-            startPointCoords,
-          isVisited: false,
-        },
-        routeToStart: new Map(),
-      })),
+      neighbours: value.neighbours
+        .filter((neighbour) => typeof neighbour !== 'undefined')
+        .map((neighbour) => ({
+          ...neighbour,
+          controlState: {
+            ...neighbour.controlState,
+            isEnd:
+              buildNodeKey(value.coords.row, value.coords.col) ===
+              endPointCoords,
+            isStart:
+              buildNodeKey(neighbour.coords.row, neighbour.coords.col) ===
+              startPointCoords,
+            isVisited: false,
+          },
+          routeToStart: new Map(),
+        })),
       routeToStart: new Map(),
     }),
   );
@@ -201,7 +205,6 @@ export const changeWeights = (
       weightedVisitedNodes.find((entry) => entry.id === neighbour.id),
     ),
   }));
-  handleSetVisitedNodes(newVisitedNodes);
 
   const deepClone = new Map();
   adjacencyList?.forEach((value, key) => {
@@ -212,7 +215,8 @@ export const changeWeights = (
   });
 
   changeEndPoint(deepClone);
-  handleSetSnapshot(newVisitedNodes);
+  handleSetVisitedNodes([...newVisitedNodes]);
+  handleSetSnapshot([...newVisitedNodes]);
   setWeights(currentWeight);
 };
 

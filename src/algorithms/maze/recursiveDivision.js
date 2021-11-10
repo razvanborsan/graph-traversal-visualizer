@@ -26,6 +26,8 @@ export default function recursiveDivision(
   handleSetVisitedNodes,
   handleSetAdjacencyList,
   handleSetSnapshot,
+  setEnableFindPath,
+  setEnableResetPath,
 ) {
   let delay = 0;
   const visited = [];
@@ -41,6 +43,7 @@ export default function recursiveDivision(
         south: resetWall(DIRECTIONS.SOUTH, value.coords),
         west: resetWall(DIRECTIONS.WEST, value.coords),
       },
+      neighbours: [],
     });
   });
 
@@ -122,6 +125,11 @@ export default function recursiveDivision(
     value.maze.isVisited = true;
     visited.push(value);
   });
+
+  setTimeout(() => {
+    setEnableFindPath(true);
+    setEnableResetPath(true);
+  }, 1000 * delay);
 
   handleSetAdjacencyList(deepCloneAdjacencyList);
   handleSetVisitedNodes([...visited]);

@@ -4,14 +4,15 @@ import { randomIntFromInterval } from 'shared/variables';
 
 const MAZE_BUILDING_DELAY = 0.05;
 
-const randomlyChooseNext = (neighbours) => {
+const randomlyChooseNext = (list, neighbours) => {
   const i = randomIntFromInterval(0, neighbours.length - 1);
 
-  if (!neighbours[i].controlState.isVisited) {
-    return neighbours[i];
+  const neighbourToCheck = list.get(getNodeKey(neighbours[i]));
+  if (!neighbourToCheck.controlState.isVisited) {
+    return neighbourToCheck;
   }
 
-  randomlyChooseNext(neighbours);
+  randomlyChooseNext(list, neighbours);
 
   return {};
 };
@@ -21,6 +22,9 @@ export default function recursiveBacktracking(
   start,
   handleSetVisitedNodes,
   handleSetSnapshot,
+  handleSetAdjacencyList,
+  setEnableFindPath,
+  setEnableResetPath,
 ) {
   const visited = [];
   let delay = 0;
@@ -28,13 +32,15 @@ export default function recursiveBacktracking(
   // Deep clone the adjacency list so we never modify it directly
   const deepCloneAdjacencyList = new Map();
   adjacencyList.forEach((value, key) => {
-    deepCloneAdjacencyList.set(key, value);
+    deepCloneAdjacencyList.set(key, {
+      ...value,
+      neighbours: [],
+    });
   });
   const deepCloneStartNode = deepCloneAdjacencyList.get(getNodeKey(start));
 
   function loop(currentNode) {
     const { neighbours } = currentNode.maze;
-
     currentNode.maze.firstVisitDelay = delay;
     delay += MAZE_BUILDING_DELAY;
 
@@ -42,7 +48,7 @@ export default function recursiveBacktracking(
 
     // Don't exit the current recursion level while the node still has unvisited neighbours
     while (neighbours.find((neighbour) => !neighbour.maze.isVisited)) {
-      const next = randomlyChooseNext(neighbours);
+      const next = randomlyChooseNext(deepCloneAdjacencyList, neighbours);
       if (!next.maze.isVisited) {
         const xCoord = next.coords.row - currentNode.coords.row;
         const yCoord = next.coords.col - currentNode.coords.col;
@@ -83,6 +89,12 @@ export default function recursiveBacktracking(
 
   loop(deepCloneStartNode);
 
+  setTimeout(() => {
+    setEnableFindPath(true);
+    setEnableResetPath(true);
+  }, 1000 * delay);
+
   handleSetVisitedNodes([...visited]);
   handleSetSnapshot([...visited]);
+  handleSetAdjacencyList(deepCloneAdjacencyList);
 }
