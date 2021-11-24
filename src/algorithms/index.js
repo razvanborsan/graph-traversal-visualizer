@@ -14,3 +14,5 @@ export { default as recursiveBacktracking } from './maze/recursiveBacktraking';
 export { default as eller } from './maze/eller';
 export { default as prim } from './maze/prim';
 export { default as recursiveDivision } from './maze/recursiveDivision';
+
+export { default as nearestNeighbour } from './tsp/nearestNeighbour';

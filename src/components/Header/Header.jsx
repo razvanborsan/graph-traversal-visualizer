@@ -16,6 +16,7 @@ export default function Header() {
           <NavItem link="/" text="Home" />
           <NavItem link="/sortings" text="Sortings" />
           <NavItem link="/graphs" text="Graphs" />
+          <NavItem link="/tsp" text="Shortest Path" />
           <NavItem link="/" text="Contact" />
         </Box>
       </Box>
