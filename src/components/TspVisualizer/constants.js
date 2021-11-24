@@ -17,7 +17,7 @@ export const getUSACapitals = () =>
     pointRadiusMaxPixels: 200,
     opacity: 1,
     pointRadiusScale: 0.3,
-    getRadius: (f) => Math.pow(10, f.properties.mag),
+    getPointRadius: (f) => Math.pow(10, f.properties.mag),
     getFillColor: [255, 70, 30, 180],
     autoHighlight: true,
     transitions: {

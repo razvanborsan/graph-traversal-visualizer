@@ -1,26 +1,19 @@
 /* eslint-disable import/prefer-default-export */
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
-}
 
-export function getDistanceFromLatLonInKm(pointACoords, pointBCoords) {
-  const latA = pointACoords[0];
-  const longA = pointACoords[1];
-  const latB = pointBCoords[0];
-  const longB = pointBCoords[1];
+export function getDistanceFromCoords(pointACoords, pointBCoords) {
+  const lat1 = Math.abs(pointACoords[1]);
+  const lon1 = Math.abs(pointACoords[0]);
+  const lat2 = Math.abs(pointBCoords[1]);
+  const lon2 = Math.abs(pointBCoords[0]);
 
-  const R = 6371; // Radius of the earth in km
-
-  const deltaLat = deg2rad(latB - latA); // deg2rad below
-  const deltaLong = deg2rad(longB - longA);
-
+  const p = 0.017453292519943295; // Math.PI / 180
   const a =
-    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-    Math.cos(deg2rad(latA)) *
-      Math.cos(deg2rad(latB)) *
-      Math.sin(deltaLong / 2) *
-      Math.sin(deltaLong / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c; // Distance in km
-  return d;
+    0.5 -
+    Math.cos((lat2 - lat1) * p) / 2 +
+    (Math.cos(lat1 * p) *
+      Math.cos(lat2 * p) *
+      (1 - Math.cos((lon2 - lon1) * p))) /
+      2;
+
+  return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }

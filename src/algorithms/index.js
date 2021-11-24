@@ -16,3 +16,4 @@ export { default as prim } from './maze/prim';
 export { default as recursiveDivision } from './maze/recursiveDivision';
 
 export { default as nearestNeighbour } from './tsp/nearestNeighbour';
+export { default as nearestInsertion } from './tsp/nearestInsertion';

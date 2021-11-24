@@ -36,6 +36,7 @@
     "gatsby-plugin-sitemap": "^4.9.0",
     "gatsby-source-filesystem": "^3.13.0",
     "gatsby-transformer-sharp": "^3.13.0",
+    "mapbox-gl": "^2.6.1",
     "nanoid": "^3.1.25",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",

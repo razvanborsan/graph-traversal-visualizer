@@ -1,4 +1,4 @@
-import { getDistanceFromLatLonInKm } from 'components/TspVisualizer/helpers';
+import { getDistanceFromCoords } from 'components/TspVisualizer/helpers';
 import UsaCapitals from 'components/TspVisualizer/UsaCapitals';
 
 const nearestNeighbour = () => {
@@ -9,25 +9,28 @@ const nearestNeighbour = () => {
   points.splice(randomIndex, 1);
 
   const path = [randomItem];
+  const pathsAnimation = [[...path]];
 
   while (points.length > 0) {
     points.sort(
       (a, b) =>
-        getDistanceFromLatLonInKm(
+        getDistanceFromCoords(
           path[path.length - 1].geometry.coordinates,
           b.geometry.coordinates,
         ) -
-        getDistanceFromLatLonInKm(
+        getDistanceFromCoords(
           path[path.length - 1].geometry.coordinates,
           a.geometry.coordinates,
         ),
     );
 
     path.push(points.pop());
+    pathsAnimation.push([...path]);
   }
 
   path.push(path[0]);
-  return path;
+  pathsAnimation.push([...path]);
+  return pathsAnimation;
 };
 
 export default nearestNeighbour;

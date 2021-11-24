@@ -1,42 +1,42 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import DeckGL from 'deck.gl';
 import StaticMap from 'react-map-gl';
 import { PathLayer } from '@deck.gl/layers';
-import { nearestNeighbour } from 'algorithms';
 import { Select, Button } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPause,
   faPlayCircle,
   faRedoAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { Flex } from '@chakra-ui/layout';
-import { getDistanceFromLatLonInKm } from 'components/TspVisualizer/helpers';
+
+import { nearestNeighbour, nearestInsertion } from 'algorithms';
+import { getDistanceFromCoords } from 'components/TspVisualizer/helpers';
+import useInterval from 'hooks/useInterval';
+
 import { getUSACapitals, usaViewport } from './constants';
-import useInterval from '../../hooks/useInterval';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 function TspVisualiser() {
   const [viewport, setViewport] = useState(usaViewport);
-  const [timestamp, setTimestamp] = useState(2);
-
   const [pathLayer, setPathLayer] = useState();
   const [capitals, setCapitals] = useState();
-  const [near, setNear] = useState(nearestNeighbour());
-  const [algo, setAlgo] = useState('nn');
   const [delay, setDelay] = useState();
+  const [timestamp, setTimestamp] = useState(0);
   const [distance, setDistance] = useState(0);
+  const [pathAnimation, setPathAnimation] = useState(nearestNeighbour());
+  const [algo, setAlgo] = useState('nearestNeighbour');
 
   useEffect(() => {
     setCapitals(getUSACapitals());
   }, []);
 
   useInterval(() => {
-    if (timestamp > near.length) {
+    if (!pathAnimation[timestamp]) {
       setDelay();
-      setTimestamp(2);
+      setTimestamp(0);
     } else {
-      setTimestamp(timestamp + 1);
       setPathLayer(
         new PathLayer({
           id: 'path-layer',
@@ -44,12 +44,13 @@ function TspVisualiser() {
             {
               name: 'random',
               color: [101, 147, 245],
-              path: near.reduce((accumulator, currentValue) => {
-                if (accumulator?.length <= timestamp) {
+              path: pathAnimation[timestamp].reduce(
+                (accumulator, currentValue) => {
                   accumulator?.push(currentValue.geometry.coordinates);
-                }
-                return accumulator;
-              }, []),
+                  return accumulator;
+                },
+                [],
+              ),
             },
           ],
           getWidth: (data) => 2,
@@ -58,7 +59,6 @@ function TspVisualiser() {
           currentTime: 0,
           widthMinPixels: 4,
           transitions: {
-            // Need be getColor which matches the accessor name
             getColor: {
               duration: 125,
             },
@@ -70,13 +70,14 @@ function TspVisualiser() {
 
       [...Array(timestamp)].forEach((entry, index) => {
         if (index > 0) {
-          myDistance += getDistanceFromLatLonInKm(
-            near[index - 1].geometry.coordinates,
-            near[index].geometry.coordinates,
+          myDistance += getDistanceFromCoords(
+            pathAnimation[timestamp][index - 1].geometry.coordinates,
+            pathAnimation[timestamp][index].geometry.coordinates,
           );
         }
       });
 
+      setTimestamp(timestamp + 1);
       setDistance(myDistance);
     }
   }, delay || null);
@@ -99,8 +100,24 @@ function TspVisualiser() {
         align="center"
         style={{ gap: 10, width: 1080, marginTop: 15 }}
       >
-        <Select value={algo}>
-          <option value="nn">Nearest Neighbour</option>
+        <Select
+          value={algo}
+          onChange={(e) => {
+            setAlgo(e.target.value);
+            switch (e.target.value) {
+              case 'nearestNeighbour':
+                setPathAnimation(nearestNeighbour());
+                break;
+              case 'nearestInsertion':
+                setPathAnimation(nearestInsertion());
+                break;
+              default:
+                break;
+            }
+          }}
+        >
+          <option value="nearestNeighbour">Nearest Neighbour</option>
+          <option value="nearestInsertion">Nearest Insertion</option>
         </Select>
 
         <Button
@@ -126,21 +143,32 @@ function TspVisualiser() {
           colorScheme="teal"
           onClick={() => {
             setPathLayer();
-            setNear(nearestNeighbour());
             setDelay();
-            setTimestamp(2);
+            setTimestamp(0);
             setDistance(0);
+
+            switch (algo) {
+              case 'nearestNeighbour':
+                setPathAnimation(nearestNeighbour());
+                break;
+              case 'nearestInsertion':
+                setPathAnimation(nearestInsertion());
+                break;
+              default:
+                break;
+            }
           }}
         >
           <FontAwesomeIcon icon={faRedoAlt} />
         </Button>
 
-        <Flex justify="center" align="center" style={{ width: 350 }}>
+        <Flex justify="center" align="center" style={{ width: 400 }}>
           Distance: {Math.floor(distance)} km
         </Flex>
 
-        <Flex justify="center" align="center" style={{ width: 750 }}>
-          Start location: {near[0].properties.name}, {near[0].properties.state}
+        <Flex justify="center" align="center" style={{ width: 650 }}>
+          Start location: {pathAnimation[0][0]?.properties?.name},{' '}
+          {pathAnimation[0][0]?.properties?.state}
         </Flex>
       </Flex>
     </>
