@@ -97,7 +97,7 @@ function TspVisualiser() {
       <Flex
         justify="center"
         align="center"
-        style={{ gap: 10, width: 600, marginTop: 15 }}
+        style={{ gap: 10, width: 1080, marginTop: 15 }}
       >
         <Select value={algo}>
           <option value="nn">Nearest Neighbour</option>
@@ -135,8 +135,12 @@ function TspVisualiser() {
           <FontAwesomeIcon icon={faRedoAlt} />
         </Button>
 
-        <Flex justify="center" align="center" style={{ width: 300 }}>
+        <Flex justify="center" align="center" style={{ width: 350 }}>
           Distance: {Math.floor(distance)} km
+        </Flex>
+
+        <Flex justify="center" align="center" style={{ width: 750 }}>
+          Start location: {near[0].properties.name}, {near[0].properties.state}
         </Flex>
       </Flex>
     </>
