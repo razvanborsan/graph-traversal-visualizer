@@ -20,3 +20,4 @@ export { default as nearestInsertion } from './tsp/nearestInsertion';
 export { default as farthestInsertion } from './tsp/farthestInsertion';
 export { default as cheapestInsertion } from './tsp/cheapestInsertion';
 export { default as randomInsertion } from './tsp/randomInsertion';
+export { default as convexHull } from './tsp/convexHull';

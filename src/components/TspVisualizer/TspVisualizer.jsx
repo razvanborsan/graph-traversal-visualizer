@@ -24,6 +24,7 @@ import useInterval from 'hooks/useInterval';
 import { getUSACapitals, usaViewport } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { TSP } from '../../algorithms/tsp/constants';
+import { convexHull } from '../../algorithms';
 
 function TspVisualiser() {
   const [viewport, setViewport] = useState(usaViewport);
@@ -127,6 +128,9 @@ function TspVisualiser() {
               case TSP.RANDOM_INSERTION:
                 setPathAnimation(randomInsertion());
                 break;
+              case TSP.CONVEX_HULL:
+                setPathAnimation(convexHull());
+                break;
               default:
                 break;
             }
@@ -137,6 +141,7 @@ function TspVisualiser() {
           <option value={TSP.FARTHEST_INSERTION}>Farthest Insertion</option>
           <option value={TSP.CHEAPEST_INSERTION}>Cheapest Insertion</option>
           <option value={TSP.RANDOM_INSERTION}>Random Insertion</option>
+          <option value={TSP.CONVEX_HULL}>Convex Hull</option>
         </Select>
 
         <Button
@@ -181,6 +186,9 @@ function TspVisualiser() {
                 break;
               case TSP.RANDOM_INSERTION:
                 setPathAnimation(randomInsertion());
+                break;
+              case TSP.CONVEX_HULL:
+                setPathAnimation(convexHull());
                 break;
               default:
                 break;
