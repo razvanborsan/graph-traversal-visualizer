@@ -11,12 +11,19 @@ import {
   faRedoAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { nearestNeighbour, nearestInsertion } from 'algorithms';
+import {
+  nearestNeighbour,
+  nearestInsertion,
+  randomInsertion,
+  farthestInsertion,
+  cheapestInsertion,
+} from 'algorithms';
 import { getDistanceFromCoords } from 'components/TspVisualizer/helpers';
 import useInterval from 'hooks/useInterval';
 
 import { getUSACapitals, usaViewport } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { TSP } from '../../algorithms/tsp/constants';
 
 function TspVisualiser() {
   const [viewport, setViewport] = useState(usaViewport);
@@ -26,7 +33,7 @@ function TspVisualiser() {
   const [timestamp, setTimestamp] = useState(0);
   const [distance, setDistance] = useState(0);
   const [pathAnimation, setPathAnimation] = useState(nearestNeighbour());
-  const [algo, setAlgo] = useState('nearestNeighbour');
+  const [algo, setAlgo] = useState(TSP.NEAREST_NEIGHBOUR);
 
   useEffect(() => {
     setCapitals(getUSACapitals());
@@ -105,25 +112,37 @@ function TspVisualiser() {
           onChange={(e) => {
             setAlgo(e.target.value);
             switch (e.target.value) {
-              case 'nearestNeighbour':
+              case TSP.NEAREST_NEIGHBOUR:
                 setPathAnimation(nearestNeighbour());
                 break;
-              case 'nearestInsertion':
+              case TSP.NEAREST_INSERTION:
                 setPathAnimation(nearestInsertion());
+                break;
+              case TSP.CHEAPEST_INSERTION:
+                setPathAnimation(cheapestInsertion());
+                break;
+              case TSP.FARTHEST_INSERTION:
+                setPathAnimation(farthestInsertion());
+                break;
+              case TSP.RANDOM_INSERTION:
+                setPathAnimation(randomInsertion());
                 break;
               default:
                 break;
             }
           }}
         >
-          <option value="nearestNeighbour">Nearest Neighbour</option>
-          <option value="nearestInsertion">Nearest Insertion</option>
+          <option value={TSP.NEAREST_NEIGHBOUR}>Nearest Neighbour</option>
+          <option value={TSP.NEAREST_INSERTION}>Nearest Insertion</option>
+          <option value={TSP.FARTHEST_INSERTION}>Farthest Insertion</option>
+          <option value={TSP.CHEAPEST_INSERTION}>Cheapest Insertion</option>
+          <option value={TSP.RANDOM_INSERTION}>Random Insertion</option>
         </Select>
 
         <Button
           colorScheme="teal"
           onClick={() => {
-            setDelay(75);
+            setDelay(100);
           }}
         >
           <FontAwesomeIcon icon={faPlayCircle} />
@@ -148,11 +167,20 @@ function TspVisualiser() {
             setDistance(0);
 
             switch (algo) {
-              case 'nearestNeighbour':
+              case TSP.NEAREST_NEIGHBOUR:
                 setPathAnimation(nearestNeighbour());
                 break;
-              case 'nearestInsertion':
+              case TSP.NEAREST_INSERTION:
                 setPathAnimation(nearestInsertion());
+                break;
+              case TSP.CHEAPEST_INSERTION:
+                setPathAnimation(cheapestInsertion());
+                break;
+              case TSP.FARTHEST_INSERTION:
+                setPathAnimation(farthestInsertion());
+                break;
+              case TSP.RANDOM_INSERTION:
+                setPathAnimation(randomInsertion());
                 break;
               default:
                 break;

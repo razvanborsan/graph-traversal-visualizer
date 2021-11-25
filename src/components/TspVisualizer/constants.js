@@ -1,5 +1,5 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
-import { UsaCapitals } from './UsaCapitals';
+import { usaCapitals } from './usaCapitals';
 
 /* eslint-disable import/prefer-default-export */
 export const usaViewport = {
@@ -11,7 +11,7 @@ export const usaViewport = {
 export const getUSACapitals = () =>
   new GeoJsonLayer({
     id: 'geojson-layer',
-    data: UsaCapitals,
+    data: usaCapitals,
     filled: true,
     pointRadiusMinPixels: 5,
     pointRadiusMaxPixels: 200,

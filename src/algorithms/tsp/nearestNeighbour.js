@@ -1,8 +1,8 @@
 import { getDistanceFromCoords } from 'components/TspVisualizer/helpers';
-import UsaCapitals from 'components/TspVisualizer/UsaCapitals';
+import usaCapitals from 'components/TspVisualizer/usaCapitals';
 
 const nearestNeighbour = () => {
-  const points = [...UsaCapitals.features];
+  const points = [...usaCapitals.features];
 
   const randomIndex = Math.floor(Math.random() * points.length);
   const randomItem = points[randomIndex];

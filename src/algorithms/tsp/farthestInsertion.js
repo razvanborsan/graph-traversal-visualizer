@@ -2,7 +2,7 @@ import { getDistanceFromCoords } from 'components/TspVisualizer/helpers';
 import usaCapitals from 'components/TspVisualizer/usaCapitals';
 import { computeCost } from './helpers';
 
-const nearestInsertion = () => {
+const farthestInsertion = () => {
   const points = [...usaCapitals.features];
 
   const randomIndex = Math.floor(Math.random() * points.length);
@@ -14,7 +14,7 @@ const nearestInsertion = () => {
   const pathsAnimation = [[...path]];
 
   while (points.length > 0) {
-    let [closestPointIndex, closestDistance] = [null, Infinity];
+    let [farthestPoint, farthestDistance] = [null, 0];
 
     points.forEach((point, pointIndex) => {
       let [minimumCost, minimumCostId] = [Infinity, null];
@@ -31,15 +31,14 @@ const nearestInsertion = () => {
         }
       });
 
-      if (minimumCost < closestDistance) {
-        [closestPointIndex, closestDistance] = [minimumCostId, minimumCost];
+      if (minimumCost > farthestDistance) {
+        [farthestPoint, farthestDistance] = [minimumCostId, minimumCost];
       }
     });
 
-    const [nextPoint] = points.splice(closestPointIndex, 1);
+    const [nextPoint] = points.splice(farthestPoint, 1);
 
     const bestPointIndex = computeCost(path, nextPoint);
-
     path.splice(bestPointIndex, 0, nextPoint);
     pathsAnimation.push([...path]);
   }
@@ -47,4 +46,4 @@ const nearestInsertion = () => {
   return pathsAnimation;
 };
 
-export default nearestInsertion;
+export default farthestInsertion;

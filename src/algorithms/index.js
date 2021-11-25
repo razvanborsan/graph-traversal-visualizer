@@ -17,3 +17,6 @@ export { default as recursiveDivision } from './maze/recursiveDivision';
 
 export { default as nearestNeighbour } from './tsp/nearestNeighbour';
 export { default as nearestInsertion } from './tsp/nearestInsertion';
+export { default as farthestInsertion } from './tsp/farthestInsertion';
+export { default as cheapestInsertion } from './tsp/cheapestInsertion';
+export { default as randomInsertion } from './tsp/randomInsertion';
