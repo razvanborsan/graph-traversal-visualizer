@@ -31,3 +31,18 @@ export const computeCost = (path, nextPoint) => {
 
   return bestPointIndex;
 };
+
+export const totalPathCost = (path) => {
+  let distance = 0;
+
+  path.forEach((point, pointIndex) => {
+    if (pointIndex > 0) {
+      distance += getDistanceFromCoords(
+        path[pointIndex - 1].geometry.coordinates,
+        path[pointIndex].geometry.coordinates,
+      );
+    }
+  });
+
+  return distance;
+};

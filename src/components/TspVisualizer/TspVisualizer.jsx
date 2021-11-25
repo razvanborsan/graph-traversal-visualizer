@@ -17,14 +17,15 @@ import {
   randomInsertion,
   farthestInsertion,
   cheapestInsertion,
+  twoOpt,
+  convexHull,
 } from 'algorithms';
-import { getDistanceFromCoords } from 'components/TspVisualizer/helpers';
 import useInterval from 'hooks/useInterval';
+import { TSP } from 'algorithms/tsp/constants';
 
 import { getUSACapitals, usaViewport } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { TSP } from '../../algorithms/tsp/constants';
-import { convexHull } from '../../algorithms';
+import { totalPathCost } from '../../algorithms/tsp/helpers';
 
 function TspVisualiser() {
   const [viewport, setViewport] = useState(usaViewport);
@@ -74,16 +75,7 @@ function TspVisualiser() {
         }),
       );
 
-      let myDistance = 0;
-
-      [...Array(timestamp)].forEach((entry, index) => {
-        if (index > 0) {
-          myDistance += getDistanceFromCoords(
-            pathAnimation[timestamp][index - 1].geometry.coordinates,
-            pathAnimation[timestamp][index].geometry.coordinates,
-          );
-        }
-      });
+      const myDistance = totalPathCost(pathAnimation[timestamp]);
 
       setTimestamp(timestamp + 1);
       setDistance(myDistance);
@@ -131,6 +123,9 @@ function TspVisualiser() {
               case TSP.CONVEX_HULL:
                 setPathAnimation(convexHull());
                 break;
+              case TSP.TWO_OPT:
+                setPathAnimation(twoOpt());
+                break;
               default:
                 break;
             }
@@ -142,12 +137,13 @@ function TspVisualiser() {
           <option value={TSP.CHEAPEST_INSERTION}>Cheapest Insertion</option>
           <option value={TSP.RANDOM_INSERTION}>Random Insertion</option>
           <option value={TSP.CONVEX_HULL}>Convex Hull</option>
+          <option value={TSP.TWO_OPT}>2-Opt Inversion</option>
         </Select>
 
         <Button
           colorScheme="teal"
           onClick={() => {
-            setDelay(100);
+            setDelay(75);
           }}
         >
           <FontAwesomeIcon icon={faPlayCircle} />
@@ -189,6 +185,9 @@ function TspVisualiser() {
                 break;
               case TSP.CONVEX_HULL:
                 setPathAnimation(convexHull());
+                break;
+              case TSP.TWO_OPT:
+                setPathAnimation(twoOpt());
                 break;
               default:
                 break;
