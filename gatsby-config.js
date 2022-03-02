@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    siteUrl: 'https://razvanborsan.github.io/algo-website',
+    siteUrl: 'https://razvanborsan.github.io',
     title: 'portfolio',
   },
   pathPrefix: '/algo-website',
