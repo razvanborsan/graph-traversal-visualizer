@@ -3,6 +3,7 @@ module.exports = {
     siteUrl: 'https://www.yourdomain.tld',
     title: 'portfolio',
   },
+  pathPrefix: '/algo-website',
   plugins: [
     'gatsby-plugin-sass',
     'gatsby-plugin-image',

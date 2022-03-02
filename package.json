@@ -4,7 +4,6 @@
   "private": true,
   "description": "portfolio",
   "author": "borsanrazvan",
-  "homepage": "http://razvanborsan.github.io/algo-website",
   "keywords": [
     "gatsby"
   ],
@@ -14,8 +13,7 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "predeploy": "gatsby build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gatsby build --prefix-paths && gh-pages -d public"
   },
   "dependencies": {
     "@chakra-ui/gatsby-plugin": "^2.0.1",
