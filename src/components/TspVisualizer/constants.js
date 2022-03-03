@@ -1,5 +1,5 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
-import { usaCapitals } from './usaCapitals';
+import usaCapitals from './UsaCapitals';
 
 /* eslint-disable import/prefer-default-export */
 export const usaViewport = {

@@ -1,4 +1,4 @@
-export const usaCapitals = {
+const usaCapitals = {
   type: 'FeatureCollection',
   features: [
     {
