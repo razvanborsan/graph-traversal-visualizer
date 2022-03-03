@@ -3,7 +3,7 @@ module.exports = {
     siteUrl: 'https://razvanborsan.github.io',
     title: 'algo-website',
   },
-  pathPrefix: '/',
+  pathPrefix: '/algo-website',
   flags: {
     FAST_DEV: true,
     DEV_SSR: true,
