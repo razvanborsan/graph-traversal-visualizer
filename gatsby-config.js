@@ -1,13 +1,13 @@
 module.exports = {
   siteMetadata: {
     siteUrl: 'https://razvanborsan.github.io',
-    title: 'portfolio',
+    title: 'algo-website',
   },
-  pathPrefix: '/algo-website',
-  // flags: {
-  //   FAST_DEV: true,
-  //   DEV_SSR: true,
-  // },
+  pathPrefix: '/',
+  flags: {
+    FAST_DEV: true,
+    DEV_SSR: true,
+  },
   plugins: [
     'gatsby-plugin-sass',
     'gatsby-plugin-image',
