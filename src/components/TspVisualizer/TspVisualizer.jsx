@@ -92,7 +92,7 @@ function TspVisualiser() {
         style={{ position: 'relative' }}
         layers={[pathLayer, capitals]}
       >
-        <StaticMap mapboxApiAccessToken="pk.eyJ1IjoibmF6bnV0IiwiYSI6ImNra2EyZWt2YTAwOWcybnFqZm5oZnQxb3UifQ.1_D0GDN0N4TWlbu0FKDAkg" />
+        <StaticMap mapboxApiAccessToken={process.env.MAPBOX_API_KEY} />
       </DeckGL>
 
       <Flex
