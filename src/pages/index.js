@@ -4,7 +4,7 @@ import { Heading, Text } from '@chakra-ui/layout';
 import * as styles from 'styles/index.module.scss';
 import { SlideFade } from '@chakra-ui/react';
 
-export default function App() {
+export default function Index() {
   return (
     <SlideFade in className={styles.container}>
       <Heading as="h2" size="2xl">
