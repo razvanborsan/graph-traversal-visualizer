@@ -1,4 +1,4 @@
-import usaCapitals from 'components/TspVisualizer/usaCapitals';
+import usaCapitals from 'components/TspVisualizer/UsaCapitals';
 import { getInsertionCost } from './helpers';
 
 const cheapestInsertion = () => {

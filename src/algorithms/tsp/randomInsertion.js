@@ -1,4 +1,4 @@
-import usaCapitals from 'components/TspVisualizer/usaCapitals';
+import usaCapitals from 'components/TspVisualizer/UsaCapitals';
 import { randomIntFromInterval } from 'shared/variables';
 import { computeCost } from './helpers';
 
