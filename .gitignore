@@ -3,4 +3,5 @@ node_modules/
 public
 .eslintrc.json
 .prettierrc
-.env
+.env.development
+.env.production
