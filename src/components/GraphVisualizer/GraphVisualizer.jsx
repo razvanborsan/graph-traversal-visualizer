@@ -265,7 +265,7 @@ export default function GraphVisualizer() {
   }, [visitedNodes, startPointCoords, endPointCoords]);
 
   return (
-    <>
+    <Box as="section">
       <Pathfinder elements={nodeElements} />
       <Box
         style={{
@@ -482,6 +482,6 @@ export default function GraphVisualizer() {
           <FontAwesomeIcon icon={faBackward} />
         </Button>
       </Box>
-    </>
+    </Box>
   );
 }

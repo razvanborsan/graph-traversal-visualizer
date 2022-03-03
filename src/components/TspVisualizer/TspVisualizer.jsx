@@ -3,7 +3,7 @@ import DeckGL from 'deck.gl';
 import StaticMap from 'react-map-gl';
 import { PathLayer } from '@deck.gl/layers';
 import { Select, Button } from '@chakra-ui/react';
-import { Flex } from '@chakra-ui/layout';
+import { Box, Flex } from '@chakra-ui/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPause,
@@ -83,7 +83,7 @@ function TspVisualiser() {
   }, delay || null);
 
   return (
-    <>
+    <Box as="section">
       <DeckGL
         initialViewState={viewport}
         width="1080px"
@@ -92,7 +92,7 @@ function TspVisualiser() {
         style={{ position: 'relative' }}
         layers={[pathLayer, capitals]}
       >
-        <StaticMap mapboxApiAccessToken={process.env.MAPBOX_API_KEY} />
+        <StaticMap mapboxApiAccessToken="pk.eyJ1IjoibmF6bnV0IiwiYSI6ImNra2EyZWt2YTAwOWcybnFqZm5oZnQxb3UifQ.1_D0GDN0N4TWlbu0FKDAkg" />
       </DeckGL>
 
       <Flex
@@ -206,7 +206,7 @@ function TspVisualiser() {
           {pathAnimation[0][0]?.properties?.state}
         </Flex>
       </Flex>
-    </>
+    </Box>
   );
 }
 
