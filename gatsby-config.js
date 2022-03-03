@@ -4,6 +4,10 @@ module.exports = {
     title: 'portfolio',
   },
   pathPrefix: '/algo-website',
+  // flags: {
+  //   FAST_DEV: true,
+  //   DEV_SSR: true,
+  // },
   plugins: [
     'gatsby-plugin-sass',
     'gatsby-plugin-image',
