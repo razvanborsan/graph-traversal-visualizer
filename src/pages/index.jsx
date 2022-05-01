@@ -1,18 +1,24 @@
-import * as React from 'react';
-import { Heading, Text, Box } from '@chakra-ui/layout';
+import React from 'react';
+import { Box, Flex, Grid } from '@chakra-ui/layout';
 
-import * as styles from 'styles/index.module.scss';
+import GraphVisualizer from 'components/GraphVisualizer';
+import Footer from 'components/Footer';
 
-export default function Index() {
+export default function Graphs() {
   return (
-    <Box as="section" className={styles.container}>
-      <Heading as="h2" size="2xl">
-        Hello!
-      </Heading>
-      <Text fontSize="md" className={styles.messageContainer}>
-        My name is Razvan Ionut Borsan and I&apos;m a frontend developer based
-        in Iasi, Romania.
-      </Text>
-    </Box>
+    <Grid
+      backgroundColor="#F2F2F2"
+      h="100vh"
+      templateColumns="1fr"
+      templateRows="auto 1fr auto"
+    >
+      <Box />
+      <Flex direction="column" justify="center" align="center">
+        <main>
+          <GraphVisualizer />
+        </main>
+      </Flex>
+      <Footer />
+    </Grid>
   );
 }

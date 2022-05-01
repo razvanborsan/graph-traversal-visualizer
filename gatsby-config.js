@@ -1,9 +1,9 @@
 module.exports = {
   siteMetadata: {
     siteUrl: 'https://razvanborsan.github.io',
-    title: 'algo-website',
+    title: 'graph-traversal-visualizer',
   },
-  pathPrefix: '/algo-website',
+  pathPrefix: '/graph-traversal-visualizer',
   flags: {
     FAST_DEV: true,
     DEV_SSR: true,

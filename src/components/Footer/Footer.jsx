@@ -1,14 +1,20 @@
 import React from 'react';
-import { Fade } from '@chakra-ui/react';
+import { Image } from '@chakra-ui/react';
+
+import github from 'images/githubLogo.svg';
 
 import * as styles from './Footer.module.scss';
 
 export default function Footer() {
   return (
-    <Fade in>
-      <footer className={styles.footerContainer}>
-        Footer is here!
-      </footer>
-    </Fade>
+    <footer className={styles.footerContainer}>
+      <a
+        href="https://github.com/razvanborsan"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Image width="40px" src={github} />
+      </a>
+    </footer>
   );
 }
