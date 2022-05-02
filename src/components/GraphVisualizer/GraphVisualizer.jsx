@@ -16,7 +16,10 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBackward, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+import { config } from '@fortawesome/fontawesome-svg-core';
 import Pathfinder from './Pathfinder';
+
+import '@fortawesome/fontawesome-svg-core/styles.css';
 
 import {
   addEdge,
@@ -35,6 +38,8 @@ import {
   MAZE_TYPES,
   getInitialNodes,
 } from './constants';
+
+config.autoAddCss = false;
 
 export default function GraphVisualizer() {
   const [nodeElements, setNodeElements] = useState([]);
@@ -463,7 +468,7 @@ export default function GraphVisualizer() {
             }
           }}
         >
-          <FontAwesomeIcon icon={faPlayCircle} />
+          <FontAwesomeIcon width="16px" icon={faPlayCircle} />
         </Button>
 
         <Button
@@ -479,7 +484,7 @@ export default function GraphVisualizer() {
             );
           }}
         >
-          <FontAwesomeIcon icon={faBackward} />
+          <FontAwesomeIcon width="16px" icon={faBackward} />
         </Button>
       </Box>
     </Box>

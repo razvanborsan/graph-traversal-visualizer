@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
     siteUrl: 'https://razvanborsan.github.io',
-    title: 'graph-traversal-visualizer',
+    title: 'Graph Visualizer',
   },
   pathPrefix: '/graph-traversal-visualizer',
   flags: {

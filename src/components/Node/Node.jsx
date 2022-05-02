@@ -14,6 +14,7 @@ import { graphVertice } from 'shared/constants';
 import colors from 'shared/colors';
 
 import { getDijkstraDelay } from 'shared/variables';
+import { config } from '@fortawesome/fontawesome-svg-core';
 import {
   finalRouteBackground,
   finalRouteColors,
@@ -25,7 +26,12 @@ import {
   getMazeColors,
   routeColors,
 } from './constants';
+
+import '@fortawesome/fontawesome-svg-core/styles.css';
+
 import * as styles from './Node.module.scss';
+
+config.autoAddCss = false;
 
 function usePrevious(value) {
   const ref = useRef();
@@ -199,7 +205,7 @@ export default function Node({
           onDragStart={() => setIsMazeAnimated(false)}
           onDragEnd={(event, info) => onStartDrag(event, info, 'start')}
         >
-          <FontAwesomeIcon icon={faPlay} />
+          <FontAwesomeIcon width="14px" icon={faPlay} />
         </MotionBox>
       )}
       {isEnd && (
@@ -229,11 +235,15 @@ export default function Node({
           onDragStart={() => setIsMazeAnimated(false)}
           onDragEnd={(event, info) => onStartDrag(event, info, 'end')}
         >
-          <FontAwesomeIcon icon={faBullseye} />
+          <FontAwesomeIcon width="14px" icon={faBullseye} />
         </MotionBox>
       )}
       {isWeighted ? (
-        <FontAwesomeIcon style={{ color: colors.anchorBlue }} icon={faAnchor} />
+        <FontAwesomeIcon
+          width="16px"
+          style={{ color: colors.anchorBlue }}
+          icon={faAnchor}
+        />
       ) : (
         ''
       )}
