@@ -17,7 +17,7 @@ Preview:
 
 ### Tech stack
 
-I used GatsbyJS with Chakra UI and SCSS modules for the interface and deck.gl for the map. The algorithms themselves are written by me in plain JavaScript.
+I used GatsbyJS with Chakra UI and SCSS modules for the interface and Framer Motion for the maze building/graph traversal animations. The algorithms themselves are written by me in plain JavaScript.
 
 ### Run locally
 
